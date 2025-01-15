@@ -30,6 +30,8 @@ export default class Webcam {
         this.video.controls = false;
         this.video.autoplay = false;
         this.video.style.opacity = "0.2";
+        // this.video.style.transform = "scaleX(-1)";
+        // this.video.style.transformOrigin = "center";
     }
 
     initCanvas() {

@@ -50,7 +50,7 @@ export default class SynthCollection {
         }
     }
 
-    addIndex(index) {
+    addChordNote(index) {
         if (this.currentIndices.includes(index)) {
 
         } else {
@@ -60,7 +60,7 @@ export default class SynthCollection {
         }
     }
 
-    removeIndex(index) {
+    removeChordNote(index) {
         if (this.currentIndices.includes(index)) {
             this.currentIndices = this.currentIndices.filter(item => item !== index);
             this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);

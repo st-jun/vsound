@@ -6,7 +6,7 @@ import {
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
 
-export default class HandPose {
+export default class HandPoseDetector {
     constructor(webcam) {
         this.detector = undefined;
         this.runningMode = "IMAGE";
@@ -54,10 +54,10 @@ export default class HandPose {
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, this.webcam.canvas.width, this.webcam.canvas.height);
         if (this.results.landmarks) {
+            if (this.detectionCallback !== undefined) {
+                this.detectionCallback(this.results.landmarks);
+            }
             for (const pose of this.results.landmarks) {
-                if (this.detectionCallback !== undefined) {
-                    this.detectionCallback(pose);
-                }
                 drawConnectors(canvasCtx, pose, HAND_CONNECTIONS, {
                     color: "#00FF00",
                     lineWidth: 5

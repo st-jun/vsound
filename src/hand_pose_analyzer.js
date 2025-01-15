@@ -14,25 +14,31 @@ function angleRad(x0, y0, x1, y1) {
 
 
 function angleDeg(x0, y0, x1, y1) {
-    return angleRad(x0, y0, x1, y1) * (180 / Math.PI);
+    return angleRad(x0, y0, x1, y1) * (180. / Math.PI);
 }
 
 
-
 export default class HandPoseAnalyzer {
-    constructor(referenceX, referenceY) {
+    constructor(controlPoint) {
         this.isAnalyzing = false;
 
-        this.referenceX = referenceX;
-        this.referenceY = referenceY;
+        this.referenceX = controlPoint[0];
+        this.referenceY = controlPoint[1];
 
         this.handPosX = 0.;
         this.handPosY = 0.;
         this.handLength = 0.;  // [0,05, 0.5]
         this.handAngle = 0.;   // [0, 180]
         this.thumbAngle = 0.;  // [0, 45]
+
         this.fingerExtension = new Array(5).fill(0.); // thumb [1.4, 1.7] fingers [0.8, 1.3] (more stable [1.0, 1.3])
         this.fingerIsExtended = new Array(5).fill(false);
+
+        this.analysisCallback = undefined;
+    }
+
+    setAnalysisCallback(analysisCallback) {
+        this.analysisCallback = analysisCallback;
     }
 
     analyze = (handPose) => {
@@ -58,6 +64,19 @@ export default class HandPoseAnalyzer {
             }
 
             this.isAnalyzing = false;
+
+            if (this.analysisCallback !== undefined) this.analysisCallback();
         }
+    }
+
+    static distanceToControlPoint(pose, controlPoint) {
+        return Math.abs(pose[9].x - controlPoint[0]) + Math.abs(pose[9].y - controlPoint[1]);
+    }
+
+    static getNearestForControlPoint(handPoses, controlPoint) {
+        if (handPoses.length === 0) return undefined;
+
+        return handPoses.reduce((min, pose) => (
+            (HandPoseAnalyzer.distanceToControlPoint(pose, controlPoint) < HandPoseAnalyzer.distanceToControlPoint(min, controlPoint)) ? pose : min), handPoses[0]);
     }
 }

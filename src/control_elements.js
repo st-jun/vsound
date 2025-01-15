@@ -61,9 +61,9 @@ export function createNoteCheckboxGroup(synthCollection) {
 
     newCheckbox.addEventListener('change', () => {
       if (newCheckbox.checked) {
-        synthCollection.addIndex(i);
+        synthCollection.addChordNote(i);
       } else {
-        synthCollection.removeIndex(i);
+        synthCollection.removeChordNote(i);
       }
     });
 
