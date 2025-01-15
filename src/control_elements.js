@@ -25,21 +25,20 @@ export function createGainSlider(description) {
 }
 
 
-export function createFrequencySlider(synthesizers) {
+export function createFrequencySlider(synthesizers, min, max, step) {
   let description = "Frequency";
 
   const newSlider = document.createElement('input');
   newSlider.type = 'range';
-  newSlider.min = '-2400';
-  newSlider.max = '2400';
+  newSlider.min = `${min}`;
+  newSlider.max = `${max}`;
   newSlider.value = synthesizers[0].get().detune;
-  newSlider.step = '100';
+  newSlider.step = `${step}`;
 
   const newDisplay = document.createElement('p');
   newDisplay.textContent = `${description}: ${synthesizers[0].get().detune}`;
 
   for (let synth of synthesizers) {
-
     newSlider.addEventListener('input', () => {
       synth.set({detune: Number(newSlider.value)});
       newDisplay.textContent = `${description}: ${synthesizers[0].get().detune}`;

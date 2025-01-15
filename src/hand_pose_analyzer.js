@@ -25,8 +25,8 @@ export default class HandPoseAnalyzer {
         this.referenceX = controlPoint[0];
         this.referenceY = controlPoint[1];
 
-        this.handPosX = 0.;
-        this.handPosY = 0.;
+        this.handDistX = 0.;
+        this.handDistY = 0.;
         this.handLength = 0.;  // [0,05, 0.5]
         this.handAngle = 0.;   // [0, 180]
         this.thumbAngle = 0.;  // [0, 45]
@@ -45,8 +45,8 @@ export default class HandPoseAnalyzer {
         if (!this.isAnalyzing) {
             this.isAnalyzing = true;
 
-            this.handPosX = (handPose[0].x + handPose[5].x + handPose[9].x + handPose[13].x + handPose[17].x) / 5. - this.referenceX;
-            this.handPosY = (handPose[0].y + handPose[5].y + handPose[9].y + handPose[13].y + handPose[17].y) / 5. - this.referenceY;
+            this.handDistX = (handPose[0].x + handPose[5].x + handPose[9].x + handPose[13].x + handPose[17].x) / 5. - this.referenceX;
+            this.handDistY = (handPose[0].y + handPose[5].y + handPose[9].y + handPose[13].y + handPose[17].y) / 5. - this.referenceY;
 
             this.handLength = norm(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y);
 

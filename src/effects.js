@@ -22,6 +22,14 @@ export default class EffectChain {
         createEffectSlider(description, this, this.effects.length-1)
     }
 
+    setEffectTone(index, tone) {
+        this.effectSetter[index](tone);
+    }
+
+    setEffectWetness(index, wetness) {
+        this.effects[index].wet.value = wetness;
+    }
+
     addDistortion(distortionValue = 0.4, description = "Distortion") {
         const distortion = new Tone.Distortion(distortionValue);
         this.registerEffect(
