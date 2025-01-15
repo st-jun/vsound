@@ -14,6 +14,7 @@ export default class HandPose {
         this.results = undefined;
         this.webcam = webcam;
         this.webcam.addPlayCallback(this.detect);
+        this.detectionCallback = undefined;
     }
 
     async createDetector() {
@@ -30,6 +31,10 @@ export default class HandPose {
         });
     }
 
+    setDetectionCallback(callbackFunc) {
+        this.detectionCallback = callbackFunc;
+    }
+
     detect = async () => {
         if (this.detector === undefined) {
             await this.createDetector();
@@ -40,22 +45,24 @@ export default class HandPose {
             await this.detector.setOptions({ runningMode: "VIDEO" });
         }
 
-        let startTimeMs = performance.now();
         if (this.lastVideoTime !== this.webcam.video.currentTime) {
             this.lastVideoTime = this.webcam.video.currentTime;
-            this.results = this.detector.detectForVideo(this.webcam.video, startTimeMs);
+            this.results = this.detector.detectForVideo(this.webcam.video, performance.now());
         }
 
         let canvasCtx = this.webcam.canvas.getContext("2d");
         canvasCtx.save();
         canvasCtx.clearRect(0, 0, this.webcam.canvas.width, this.webcam.canvas.height);
         if (this.results.landmarks) {
-            for (const landmarks of this.results.landmarks) {
-                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {
+            for (const pose of this.results.landmarks) {
+                if (this.detectionCallback !== undefined) {
+                    this.detectionCallback(pose);
+                }
+                drawConnectors(canvasCtx, pose, HAND_CONNECTIONS, {
                     color: "#00FF00",
                     lineWidth: 5
                 });
-                drawLandmarks(canvasCtx, landmarks, { color: "#FF0000", lineWidth: 2 });
+                drawLandmarks(canvasCtx, pose, { color: "#FF0000", lineWidth: 2 });
             }
         }
         canvasCtx.restore();
