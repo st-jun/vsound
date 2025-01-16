@@ -50,7 +50,8 @@ export default class SynthCollection {
         this.synthesizerGains = [];
         for (let s of synthesizers) {
             let ps = new Tone.PolySynth(s);
-            let gain = createGainSlider(s.name);
+            let gain = new Tone.Gain(0.1)
+            createGainSlider(s.name, gain);
             console.log(gain);
             ps.connect(gain);
             gain.connect(outRoute);

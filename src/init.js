@@ -6,9 +6,12 @@ import * as controls from "./control_elements.js";
 import Connector from "./connector.js";
 import HandPoseAnalyzer from "./hand_pose_analyzer.js";
 import {InstrumentController} from "./controller.js";
+import UI from "./visualization.js";
+
 
 // initialize instruments and effects
-const mainGain = controls.createGainSlider("Main Gain")
+const mainGain = new Tone.Gain(0.1);
+controls.createGainSlider("Main Gain", mainGain);
 mainGain.toDestination();
 
 const effectChain = new EffectChain();
@@ -34,6 +37,9 @@ for (let xy of controlPoints) {
     handPoseAnalyzers.push(handPoseAnalyzer);
 }
 controllers.push(new InstrumentController(synthCollection, effectChain, mainGain, handPoseAnalyzers[0]));
+
+// initialize UI
+const ui = new UI(webcam, handPoseAnalyzers[0]);
 
 // initialize the main component
 const connector = new Connector(controlPoints, handPoseAnalyzers);

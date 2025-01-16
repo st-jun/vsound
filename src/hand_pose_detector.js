@@ -47,25 +47,30 @@ export default class HandPoseDetector {
 
         if (this.lastVideoTime !== this.webcam.video.currentTime) {
             this.lastVideoTime = this.webcam.video.currentTime;
-            this.results = this.detector.detectForVideo(this.webcam.video, performance.now());
+            try {
+                this.results = this.detector.detectForVideo(this.webcam.video, performance.now());
+            } catch (error) {
+                console.warn(error);
+                return;
+            }
         }
 
-        let canvasCtx = this.webcam.canvas.getContext("2d");
-        canvasCtx.save();
-        canvasCtx.clearRect(0, 0, this.webcam.canvas.width, this.webcam.canvas.height);
+        // let canvasCtx = this.webcam.canvas.getContext("2d");
+        // canvasCtx.save();
+        // canvasCtx.clearRect(0, 0, this.webcam.canvas.width, this.webcam.canvas.height);
         if (this.results.landmarks) {
             if (this.detectionCallback !== undefined) {
                 this.detectionCallback(this.results.landmarks);
             }
-            for (const pose of this.results.landmarks) {
-                drawConnectors(canvasCtx, pose, HAND_CONNECTIONS, {
-                    color: "#00FF00",
-                    lineWidth: 5
-                });
-                drawLandmarks(canvasCtx, pose, { color: "#FF0000", lineWidth: 2 });
-            }
+            // for (const pose of this.results.landmarks) {
+            //     drawConnectors(canvasCtx, pose, HAND_CONNECTIONS, {
+            //         color: "#00FF00",
+            //         lineWidth: 5
+            //     });
+            //     drawLandmarks(canvasCtx, pose, { color: "#FF0000", lineWidth: 2 });
+            // }
         }
-        canvasCtx.restore();
+        // canvasCtx.restore();
 
         if (this.webcam.isRunning === true) {
             window.requestAnimationFrame(this.detect);

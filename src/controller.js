@@ -7,7 +7,7 @@ class Controller {
         this.effectChain = effectChain;
         this.mainGain = mainGain;
         this.handPoseAnalyzer = handPoseAnalyzer;
-        this.handPoseAnalyzer.setAnalysisCallback(this.setParameters);
+        this.handPoseAnalyzer.addAnalysisCallback(this.setParameters);
     }
 
     getMainGain() {

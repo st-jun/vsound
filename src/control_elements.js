@@ -1,8 +1,8 @@
 
+const controlElementsActivated = false;
 
-export function createGainSlider(description) {
-  const newGain = new Tone.Gain(0.1)
 
+export function createGainSlider(description, newGain) {
   const newSlider = document.createElement('input');
   newSlider.type = 'range';
   newSlider.min = '0.';
@@ -18,10 +18,8 @@ export function createGainSlider(description) {
     newDisplay.textContent = `${description}: ${newGain.gain.value}`;
   });
 
-  document.body.appendChild(newDisplay);
-  document.body.appendChild(newSlider);
-
-  return newGain;
+  if (controlElementsActivated) document.body.appendChild(newDisplay);
+  if (controlElementsActivated) document.body.appendChild(newSlider);
 }
 
 
@@ -45,8 +43,8 @@ export function createFrequencySlider(synthesizers, min, max, step) {
     });
   }
 
-  document.body.appendChild(newDisplay);
-  document.body.appendChild(newSlider);
+  if (controlElementsActivated) document.body.appendChild(newDisplay);
+  if (controlElementsActivated) document.body.appendChild(newSlider);
 }
 
 
@@ -66,8 +64,8 @@ export function createNoteCheckboxGroup(synthCollection) {
       }
     });
 
-    document.body.appendChild(newDisplay);
-    document.body.appendChild(newCheckbox);
+    if (controlElementsActivated) document.body.appendChild(newDisplay);
+    if (controlElementsActivated) document.body.appendChild(newCheckbox);
   }
 }
 
@@ -90,8 +88,8 @@ export function createChordSlider(synthCollection) {
     newDisplay.textContent = `${description}: ${synthCollection.chordIndex}`;
   });
 
-  document.body.appendChild(newDisplay);
-  document.body.appendChild(newSlider);
+  if (controlElementsActivated) document.body.appendChild(newDisplay);
+  if (controlElementsActivated) document.body.appendChild(newSlider);
 }
 
 
@@ -113,8 +111,8 @@ export function createEffectSlider(description, effectChain, effectIndex) {
     toneDisplay.textContent = `${description} tone: ${effectChain.effectGetter[effectIndex]()}`;
   });
 
-  document.body.appendChild(toneDisplay);
-  document.body.appendChild(toneSlider);
+  if (controlElementsActivated) document.body.appendChild(toneDisplay);
+  if (controlElementsActivated) document.body.appendChild(toneSlider);
 
   // control the contribution to the output signal
   const wetSlider = document.createElement('input');
@@ -132,6 +130,6 @@ export function createEffectSlider(description, effectChain, effectIndex) {
     wetDisplay.textContent = `${description} wet: ${effectChain.effects[effectIndex].wet.value}`;
   });
 
-  document.body.appendChild(wetDisplay);
-  document.body.appendChild(wetSlider);
+  if (controlElementsActivated) document.body.appendChild(wetDisplay);
+  if (controlElementsActivated) document.body.appendChild(wetSlider);
 }

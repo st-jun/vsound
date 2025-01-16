@@ -25,33 +25,38 @@ export default class HandPoseAnalyzer {
         this.referenceX = controlPoint[0];
         this.referenceY = controlPoint[1];
 
+        this.palmX = 0.;
+        this.palmY = 0.;
+
         this.handDistX = 0.;
         this.handDistY = 0.;
         this.handLength = 0.;  // [0,05, 0.5]
         this.handAngle = 0.;   // [0, 180]
         this.thumbAngle = 0.;  // [0, 45]
 
+        this.fingerTipX = new Array(5).fill(0.);
+        this.fingerTipY = new Array(5).fill(0.);
+
         this.fingerExtension = new Array(5).fill(0.); // thumb [1.4, 1.7] fingers [0.8, 1.3] (more stable [1.0, 1.3])
         this.fingerIsExtended = new Array(5).fill(false);
 
-        this.analysisCallback = undefined;
+        this.analysisCallback = [];
     }
 
-    setAnalysisCallback(analysisCallback) {
-        this.analysisCallback = analysisCallback;
+    addAnalysisCallback(analysisCallback) {
+        this.analysisCallback.push(analysisCallback);
     }
 
     analyze = (handPose) => {
         if (!this.isAnalyzing) {
             this.isAnalyzing = true;
 
+            this.palmX = (handPose[5].x + handPose[17].x + handPose[0].x) / 3.;
+            this.palmY = (handPose[5].y + handPose[17].y + handPose[0].y) / 3.;
             this.handDistX = (handPose[0].x + handPose[5].x + handPose[9].x + handPose[13].x + handPose[17].x) / 5. - this.referenceX;
             this.handDistY = (handPose[0].y + handPose[5].y + handPose[9].y + handPose[13].y + handPose[17].y) / 5. - this.referenceY;
-
             this.handLength = norm(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y);
-
-            this.handAngle = angleDeg(
-                handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y, 1., 0);
+            this.handAngle = angleDeg(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y, 1., 0);
             this.thumbAngle = angleDeg(
                 handPose[4].x - handPose[1].x, handPose[4].y - handPose[1].y,
                 handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y);
@@ -61,11 +66,16 @@ export default class HandPoseAnalyzer {
                     norm(handPose[i * 4 + 4].x - handPose[0].x, handPose[i * 4 + 4].y - handPose[0].y) /
                     norm(handPose[i * 4 + 2].x - handPose[0].x, handPose[i * 4 + 2].y - handPose[0].y);
                 this.fingerIsExtended[i] = (i === 0)? this.fingerExtension[i] > 1.6 : this.fingerExtension[i] > 1.0;
+
+                this.fingerTipX[i] = handPose[i * 4 + 4].x;
+                this.fingerTipY[i] = handPose[i * 4 + 4].y;
             }
 
             this.isAnalyzing = false;
 
-            if (this.analysisCallback !== undefined) this.analysisCallback();
+            for (let callbackFunc of this.analysisCallback) {
+                callbackFunc();
+            }
         }
     }
 
