@@ -7,7 +7,9 @@ class Controller {
         this.effectChain = effectChain;
         this.mainGain = mainGain;
         this.handPoseAnalyzer = handPoseAnalyzer;
-        this.handPoseAnalyzer.addAnalysisCallback(this.setParameters);
+        this.handPoseAnalyzer.addPostAnalysisCallback(this.setParameters);
+
+        this.settingParameters = false;
     }
 
     getMainGain() {
@@ -15,69 +17,78 @@ class Controller {
     }
 
     getInstrumentGain(nInstruments, i) {
-        return undefined;
+        return null;
     }
 
     getNoteActive(nNotes, i) {
-        return undefined;
+        return null;
     }
 
     getChordType(nChords) {
-        return undefined;
+        return null;
     }
 
     getFrequency(nSteps) {
-        return undefined;
+        return null;
     }
 
     getEffectTone(nEffects, i) {
-        return undefined;
+        return null;
     }
 
     getEffectWetness(nEffects, i) {
-        return undefined;
+        return null;
     }
 
     setParameters = () => {
-        let result;
+        if (!this.settingParameters) {
+            this.settingParameters = true;
 
-        // chord type
-        result = this.getChordType(SynthCollection.chords.length);
-        if (result !== undefined) this.synthCollection.changeChord(result);
+            let result;
 
-        // chord notes
-        for (let i = 0; i < this.synthCollection.currentChord.length; i++) {
-            result = this.getNoteActive(this.synthCollection.currentChord.length, i);
-            if (result !== undefined && result === true) {
-                this.synthCollection.addChordNote(i);
-            } else{
-                this.synthCollection.removeChordNote(i);
+            // chord type
+            result = this.getChordType(SynthCollection.chords.length);
+            if (result !== null) this.synthCollection.changeChord(result);
+
+            // chord notes
+            for (let i = 0; i < this.synthCollection.currentChord.length; i++) {
+                result = this.getNoteActive(this.synthCollection.currentChord.length, i);
+                if (result !== null) {
+                    if (result === true) {
+                        this.synthCollection.addChordNote(i);
+                    } else{
+                        this.synthCollection.removeChordNote(i);
+                    }
+                }
             }
-        }
 
-        // frequency / detune
-        result = this.getFrequency(SynthCollection.chordProgressions[0].length);
-        if (result !== undefined) this.synthCollection.setFrequencyStep(result);
+            // frequency / detune
+            result = this.getFrequency(SynthCollection.chordProgressions[0].length);
+            if (result !== null) this.synthCollection.setFrequencyStep(result);
 
-        // instrument gains
-        for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
-            result = this.getInstrumentGain(this.synthCollection.synthesizers.length, i);
-            if (result !== undefined) this.synthCollection.setInstrumentGain(i, result);
-        }
+            // instrument gains
+            for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
+                result = this.getInstrumentGain(this.synthCollection.synthesizers.length, i);
+                if (result !== null) this.synthCollection.setInstrumentGain(i, result);
+            }
 
-        // effect tone
-        for (let i = 0; i < this.effectChain.effects.length; i++) {
-            result = this.getEffectTone(this.effectChain.effects.length, i);
-            if (result !== undefined) this.effectChain.setEffectTone(i, result);
-        }
+            // effect tone
+            for (let i = 0; i < this.effectChain.effects.length; i++) {
+                result = this.getEffectTone(this.effectChain.effects.length, i);
+                if (result !== null) this.effectChain.setEffectTone(i, result);
+            }
 
-        // effect wetness
-        for (let i = 0; i < this.effectChain.effects.length; i++) {
-            result = this.getEffectWetness(this.effectChain.effects.length, i);
-            if (result !== undefined) this.effectChain.setEffectWetness(i, result);
+            // effect wetness
+            for (let i = 0; i < this.effectChain.effects.length; i++) {
+                result = this.getEffectWetness(this.effectChain.effects.length, i);
+                if (result !== null) this.effectChain.setEffectWetness(i, result);
+            }
+
+            this.settingParameters = false;
         }
     }
 }
+
 
 export class InstrumentController extends Controller {
     getInstrumentGain(nInstruments, i) {
@@ -92,10 +103,22 @@ export class InstrumentController extends Controller {
     }
 
     getChordType(nChords) {
-        return (this.handPoseAnalyzer.thumbAngle < 20)? 0 : 1; // only change between minor and major here
+        //return (this.handPoseAnalyzer.thumbAngle < 20)? 0 : 1; // only change between minor and major here
+        return Math.round((this.handPoseAnalyzer.handAngle - 45) / 135. * (nChords - 1));
     }
 
     getFrequency(nSteps) {
         return nSteps - (this.handPoseAnalyzer.handDistY + 0.5) * nSteps;
+    }
+}
+
+
+export class EffectController extends Controller {
+    getEffectTone(nEffects, i) {
+        return (this.handPoseAnalyzer.fingerIsExtended[i+1])? Math.min(1., Math.max(0., (this.handPoseAnalyzer.fingerExtension[i+1] - 0.9) / 0.4)) : 0.;
+    }
+
+    getEffectWetness(nEffects, i) {
+        return this.handPoseAnalyzer.handAngle / 180.;
     }
 }

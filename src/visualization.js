@@ -8,11 +8,11 @@ function drawCircle(ctx, x, y, radius, color) {
 }
 
 
+
+
 export default class UI {
-    constructor(camera, handPoseAnalyzer) {
+    constructor(camera) {
         this.camera = camera;
-        this.handPoseAnalyzer = handPoseAnalyzer;
-        this.handPoseAnalyzer.addAnalysisCallback(this.draw);
 
         this.initContainer();
         this.initCanvas();
@@ -65,33 +65,38 @@ export default class UI {
         return this.canvas.height * normalizedY;
     }
 
-    draw = async () => {
+    draw = (handPoseAnalyzer) => {
         if (!this.drawing) {
             this.drawing = true;
 
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+            this.drawHand(handPoseAnalyzer);
+            this.drawing = false;
+        }
+    }
+
+    drawHand(handPoseAnalyzers) {
+        for (let handPoseAnalyzer of handPoseAnalyzers) {
             // palm
             drawCircle(
                 this.ctx,
-                this.getX((1. - this.handPoseAnalyzer.palmX)),
-                this.getY(this.handPoseAnalyzer.palmY),
-                this.getX(this.handPoseAnalyzer.handLength / 5.),
+                this.getX((1. - handPoseAnalyzer.palmX)),
+                this.getY(handPoseAnalyzer.palmY),
+                this.getX(handPoseAnalyzer.handLength / 5.),
                 "red");
 
             // fingers
-            for (let i = 0; i < this.handPoseAnalyzer.fingerTipX.length; i++) {
-                if (this.handPoseAnalyzer.fingerIsExtended[i]) {
+            for (let i = 0; i < handPoseAnalyzer.fingerTipX.length; i++) {
+                if (handPoseAnalyzer.fingerIsExtended[i] || i === 0) {
                     drawCircle(
                         this.ctx,
-                        this.getX((1. - this.handPoseAnalyzer.fingerTipX[i])),
-                        this.getY(this.handPoseAnalyzer.fingerTipY[i]),
-                        this.getX(this.handPoseAnalyzer.fingerExtension[i]/100.),
+                        this.getX((1. - handPoseAnalyzer.fingerTipX[i])),
+                        this.getY(handPoseAnalyzer.fingerTipY[i]),
+                        this.getX(handPoseAnalyzer.fingerExtension[i] / 100.),
                         "red");
                 }
             }
-
-            this.drawing = false;
         }
     }
 }

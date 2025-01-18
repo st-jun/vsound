@@ -1,4 +1,4 @@
-import {createGainSlider, createFrequencySlider} from "./control_elements.js";
+import {createGainSlider} from "./control_elements.js";
 
 
 class Chords {
@@ -43,7 +43,7 @@ class Chords {
 export default class SynthCollection {
 
     static chords = [Chords.major, Chords.minor, Chords.power];
-    static chordProgressions = [Chords.majorProgression, Chords.minorProgression, Chords.powerProgression];
+    static chordProgressions = [Chords.powerProgression, Chords.majorProgression, Chords.minorProgression];
 
     constructor(synthesizers, outRoute) {
         this.synthesizers = [];
@@ -52,14 +52,11 @@ export default class SynthCollection {
             let ps = new Tone.PolySynth(s);
             let gain = new Tone.Gain(0.1)
             createGainSlider(s.name, gain);
-            console.log(gain);
             ps.connect(gain);
             gain.connect(outRoute);
             this.synthesizers.push(ps);
             this.synthesizerGains.push(gain);
         }
-
-        // createFrequencySlider(this.synthesizers, this.frequencyMin, this.frequencyMax, this.frequencyStep);
 
         this.currentNotes = null;
         this.currentIndices = [];
@@ -98,13 +95,15 @@ export default class SynthCollection {
             this.chordIndex = chordIndex;
             this.currentChord = SynthCollection.chordProgressions[this.chordIndex][this.frequencyIndex];
 
-            let oldNotes = this.currentNotes;
-            this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
+            if (this.currentIndices.length > 0) {
+                let oldNotes = this.currentNotes;
+                this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
 
-            for (let j = 0; j < oldNotes.length; j++) {
-                if (this.currentNotes[j] !== oldNotes[j]) {
-                    this.stop(oldNotes[j]);
-                    this.play(this.currentNotes[j]);
+                for (let j = 0; j < oldNotes.length; j++) {
+                    if (this.currentNotes[j] !== oldNotes[j]) {
+                        this.stop(oldNotes[j]);
+                        this.play(this.currentNotes[j]);
+                    }
                 }
             }
         }

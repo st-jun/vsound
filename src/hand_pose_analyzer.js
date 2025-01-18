@@ -43,7 +43,7 @@ export default class HandPoseAnalyzer {
         this.analysisCallback = [];
     }
 
-    addAnalysisCallback(analysisCallback) {
+    addPostAnalysisCallback(analysisCallback) {
         this.analysisCallback.push(analysisCallback);
     }
 

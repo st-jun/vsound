@@ -2,9 +2,10 @@ import HandPoseAnalyzer from "./hand_pose_analyzer.js";
 
 
 export default class Connector {
-    constructor(controlPoints, handPoseAnalyzers) {
+    constructor(controlPoints, handPoseAnalyzers, ui) {
         this.controlPoints = controlPoints;
         this.handPoseAnalyzers = handPoseAnalyzers;
+        this.ui = ui;
     }
 
     processPoses = (handPoses) => {
@@ -14,5 +15,7 @@ export default class Connector {
                 this.handPoseAnalyzers[i].analyze(handPose);
             }
         }
+
+        this.ui.draw(this.handPoseAnalyzers);
     }
 }
