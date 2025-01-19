@@ -40,29 +40,29 @@ export default class HandPoseDetector {
             await this.createDetector();
         }
 
-        if (this.runningMode === "IMAGE") {
-            this.runningMode = "VIDEO";
-            await this.detector.setOptions({ runningMode: "VIDEO" });
-        }
+        if (this.webcam.isRunning) {
+            if (this.runningMode === "IMAGE") {
+                this.runningMode = "VIDEO";
+                await this.detector.setOptions({ runningMode: "VIDEO" });
+            }
 
-        if (this.lastVideoTime !== this.webcam.video.currentTime) {
-            this.lastVideoTime = this.webcam.video.currentTime;
-            try {
-                this.results = this.detector.detectForVideo(this.webcam.video, performance.now());
-            } catch (error) {
-                console.warn(error);
-                return;
+            if (this.lastVideoTime !== this.webcam.video.currentTime) {
+                this.lastVideoTime = this.webcam.video.currentTime;
+                try {
+                    this.results = this.detector.detectForVideo(this.webcam.video, performance.now());
+                } catch (error) {
+                    console.warn(error);
+                    this.detector = undefined;
+                    return;
+                }
+            }
+
+            if (this.results.landmarks) {
+                if (this.detectionCallback !== undefined) {
+                    this.detectionCallback(this.results.landmarks);
+                }
             }
         }
-
-        if (this.results.landmarks) {
-            if (this.detectionCallback !== undefined) {
-                this.detectionCallback(this.results.landmarks);
-            }
-        }
-
-        if (this.webcam.isRunning === true) {
-            window.requestAnimationFrame(this.detect);
-        }
+        this.webcam.video.requestVideoFrameCallback(this.detect);
     }
 }

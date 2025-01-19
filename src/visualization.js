@@ -83,7 +83,7 @@ export default class UI {
                 this.ctx,
                 this.getX((1. - handPoseAnalyzer.palmX)),
                 this.getY(handPoseAnalyzer.palmY),
-                this.getX(handPoseAnalyzer.handLength / 5.),
+                this.getX(handPoseAnalyzer.handLength / 10.),
                 "red");
 
             // fingers

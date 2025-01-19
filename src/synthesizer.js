@@ -1,146 +1,102 @@
-import {createGainSlider} from "./control_elements.js";
 
 
-class Chords {
-    static major = ["C4", "E4",  "G4", "Bb4"];
-    static minor = ["C4", "Eb4", "G4", "Bb4"];
-    static power = ["C4", "G4", "C5"];
+class Synthesizer {
+    constructor(cls, baseGain) {
+        // try {
+            this.synth = new Tone.PolySynth(cls, this.getDefaultParameters());
+        // } catch (e) {
+        //     this.synth = new cls(this.getSynthParameters());
+        // }
 
-    static majorProgression = [
-        ["C4", "E4", "G4", "B4"],
-        ["D4", "F4", "A4", "C5"],
-        ["E4", "G4", "B4", "D5"],
-        ["F4", "A4", "C5", "E5"],
-        ["G4", "B4", "D5", "F5"],
-        ["A4", "C5", "E5", "G5"],
-        ["B4", "D5", "F5", "A5"],
-        ["C5", "E5", "G5", "B5"]
-    ];
+        this.synth.maxPolyphony = 80;
+        this.baseGain = baseGain;
+        this.gain = new Tone.Gain(0.1);
+        this.synth.connect(this.gain);
 
-    static minorProgression = [
-        ["A3", "C4", "E4", "G4"],
-        ["B3", "D4", "F4", "A4"],
-        ["C4", "Eb4", "G4", "Bb4"],
-        ["D4", "F4", "A4", "C5"],
-        ["E4", "G4", "B4", "D5"],
-        ["F4", "Ab4", "C5", "Eb5"],
-        ["G4", "Bb4", "D5", "F5"],
-        ["A4", "C5", "E5", "G5"]
-    ];
+        this.arpeggioSynth = new cls(this.getDefaultParameters());
+        this.arpeggioGain = new Tone.Gain(0.1);
+        this.arpeggioSynth.connect(this.arpeggioGain);
+    }
 
-    static powerProgression = [
-        ["C4", "G4", "C5", "G5"],
-        ["D4", "A4", "D5", "A5"],
-        ["E4", "B4", "E5", "B5"],
-        ["F4", "C5", "F5", "C6"],
-        ["G4", "D5", "G5", "D6"],
-        ["A4", "E5", "A5", "E6"],
-        ["B4", "F#5", "B5", "F#6"],
-        ["C5", "G5", "C6", "G6"]
-    ];
+    getDefaultParameters() {
+        return undefined;
+    }
+
+    connect(outRoute) {
+        this.gain.connect(outRoute);
+    }
+
+    connectArpeggio(outRoute) {
+        this.arpeggioGain.connect(outRoute);
+    }
+
+    setGain(newGain) {
+        //console.log(this.synth.name, newGain);
+        this.gain.gain.value = newGain * this.baseGain;
+        this.arpeggioGain.gain.value = newGain * this.baseGain;
+    }
+
+    setTone(newTone) {
+        return undefined;
+    }
 }
 
-export default class SynthCollection {
 
-    static chords = [Chords.major, Chords.minor, Chords.power];
-    static chordProgressions = [Chords.powerProgression, Chords.majorProgression, Chords.minorProgression];
-
-    constructor(synthesizers, outRoute) {
-        this.synthesizers = [];
-        this.synthesizerGains = [];
-        for (let s of synthesizers) {
-            let ps = new Tone.PolySynth(s);
-            let gain = new Tone.Gain(0.1)
-            createGainSlider(s.name, gain);
-            ps.connect(gain);
-            gain.connect(outRoute);
-            this.synthesizers.push(ps);
-            this.synthesizerGains.push(gain);
-        }
-
-        this.currentNotes = null;
-        this.currentIndices = [];
-
-        this.chordIndex = 0;
-        this.frequencyIndex = 0;
-        this.currentChord = Chords.minor;
-
+export class FMSynthesizer extends Synthesizer {
+    constructor() {
+        super(Tone.FMSynth, 0.4);
     }
 
-    setFrequencyStep(frequencyIndex) {
-        frequencyIndex = Math.round(frequencyIndex);
-
-        if (frequencyIndex !== this.frequencyIndex) {
-            this.frequencyIndex = frequencyIndex;
-            this.currentChord = SynthCollection.chordProgressions[this.chordIndex][this.frequencyIndex];
-
-            if (this.currentIndices.length > 0) {
-                let oldNotes = this.currentNotes;
-                this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
-
-                for (let j = 0; j < oldNotes.length; j++) {
-                    if (this.currentNotes[j] !== oldNotes[j]) {
-                        this.stop(oldNotes[j]);
-                        this.play(this.currentNotes[j]);
-                    }
-                }
-            }
-        }
+    getDefaultParameters() {
+        return {
+            oscillator: {type: "square"},
+            modulation: {type: "sawtooth"},
+            harmonicity: 10,
+            envelope: { attack: 0.1, release: 0.3 }
+        };
     }
 
-    changeChord(chordIndex) {
-        chordIndex = Math.round(chordIndex);
+    setTone(newTone) {
+        this.synth.set({modulationIndex: 50 * newTone});
+        // this.synth.get().modulationIndex.value = 50 * newTone;
+        this.arpeggioSynth.modulationIndex.value = 50 * newTone;
+    }
+}
 
-        if (chordIndex !== this.chordIndex) {
-            this.chordIndex = chordIndex;
-            this.currentChord = SynthCollection.chordProgressions[this.chordIndex][this.frequencyIndex];
 
-            if (this.currentIndices.length > 0) {
-                let oldNotes = this.currentNotes;
-                this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
-
-                for (let j = 0; j < oldNotes.length; j++) {
-                    if (this.currentNotes[j] !== oldNotes[j]) {
-                        this.stop(oldNotes[j]);
-                        this.play(this.currentNotes[j]);
-                    }
-                }
-            }
-        }
-    };
-
-    setInstrumentGain(index, gain) {
-        this.synthesizerGains[index].gain.value = gain;
+export class AMSynthesizer extends Synthesizer {
+    constructor() {
+        super(Tone.AMSynth, 1);
     }
 
-    play(notes) {
-        for (let s of this.synthesizers) {
-            s.triggerAttack(notes);
-        }
+    getDefaultParameters() {
+        return {
+            envelope: { attack: 0.3, release: 2 }
+        };
     }
 
-    stop(notes) {
-        for (let s of this.synthesizers) {
-            s.triggerRelease(notes);
-        }
+    setTone(newTone) {
+        this.synth.set({harmonicity: 1 * newTone});
+        this.arpeggioSynth.harmonicity.value = 1 * newTone;
+    }
+}
+
+
+export class DuoSynthesizer extends Synthesizer {
+    constructor() {
+        super(Tone.DuoSynth, 0.25);
     }
 
-    addChordNote(index) {
-        if (this.currentIndices.includes(index)) {
-
-        } else {
-            this.currentIndices.push(index);
-            this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
-            this.play(this.currentChord[index]);
-        }
+    getDefaultParameters() {
+        return {
+            voice0: { oscillator: { type: "sine" } },
+            voice1: { oscillator: { type: "sawtooth" } },
+            vibratoAmount: 0.5
+        };
     }
 
-    removeChordNote(index) {
-        if (this.currentIndices.includes(index)) {
-            this.currentIndices = this.currentIndices.filter(item => item !== index);
-            this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
-            this.stop(this.currentChord[index]);
-        } else {
-        }
+    setTone(newTone) {
+        this.synth.set({harmonicity: 2 * newTone, vibratoRate: newTone * 10, vibratoAmount: newTone});
+        this.arpeggioSynth.set({harmonicity: 2 * newTone, vibratoRate: newTone * 10, vibratoAmount: newTone});
     }
 }

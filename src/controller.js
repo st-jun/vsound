@@ -1,22 +1,37 @@
-import SynthCollection from "./synthesizer.js";
+import SynthCollection from "./oscillator_stage.js";
+import {clip} from "./util.js";
 
 
 class Controller {
-    constructor(synthCollection, effectChain, mainGain, handPoseAnalyzer) {
+    constructor(synthCollection, effectChain, handPoseAnalyzer) {
         this.synthCollection = synthCollection;
         this.effectChain = effectChain;
-        this.mainGain = mainGain;
         this.handPoseAnalyzer = handPoseAnalyzer;
         this.handPoseAnalyzer.addPostAnalysisCallback(this.setParameters);
 
         this.settingParameters = false;
-    }
 
-    getMainGain() {
-        return 0.1;
+        this.lastIter = performance.now();
+        this.minIterDuration = 10;
     }
 
     getInstrumentGain(nInstruments, i) {
+        return null;
+    }
+
+    getInstrumentTone(nInstruments, i) {
+        return null;
+    }
+
+    getArpeggioContribution() {
+        return null;
+    }
+
+    getArpeggioSpeed() {
+        return null;
+    }
+
+    getArpeggioDirection(nDirections) {
         return null;
     }
 
@@ -40,7 +55,23 @@ class Controller {
         return null;
     }
 
+    getLowpassValue() {
+        return null;
+    }
+
+    getHighpassValue() {
+        return null;
+    }
+
     setParameters = () => {
+        // limit updates
+        const now = performance.now();
+        if (now - this.lastIter >= this.minIterDuration) {
+            this.lastIter = now;
+        } else {
+            return;
+        }
+
         if (!this.settingParameters) {
             this.settingParameters = true;
 
@@ -62,6 +93,14 @@ class Controller {
                 }
             }
 
+            // arpeggio
+            result = this.getArpeggioContribution();
+            if (result !== null) this.synthCollection.setArpeggioContribution(result);
+            result = this.getArpeggioSpeed();
+            if (result !== null) this.synthCollection.setArpeggioSpeed(result);
+            result = this.getArpeggioDirection(this.synthCollection.arpeggioDirections.length);
+            if (result !== null) this.synthCollection.setArpeggioDirection(result);
+
             // frequency / detune
             result = this.getFrequency(SynthCollection.chordProgressions[0].length);
             if (result !== null) this.synthCollection.setFrequencyStep(result);
@@ -70,6 +109,12 @@ class Controller {
             for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
                 result = this.getInstrumentGain(this.synthCollection.synthesizers.length, i);
                 if (result !== null) this.synthCollection.setInstrumentGain(i, result);
+            }
+
+            // instrument tones
+            for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
+                result = this.getInstrumentTone(this.synthCollection.synthesizers.length, i);
+                if (result !== null) this.synthCollection.setInstrumentTone(i, result);
             }
 
             // effect tone
@@ -84,6 +129,12 @@ class Controller {
                 if (result !== null) this.effectChain.setEffectWetness(i, result);
             }
 
+            // filter
+            result = this.getLowpassValue();
+            if (result !== null) this.effectChain.setLowpassFilter(result);
+            result = this.getHighpassValue();
+            if (result !== null) this.effectChain.setHighpassFilter(result);
+
             this.settingParameters = false;
         }
     }
@@ -92,10 +143,15 @@ class Controller {
 
 export class InstrumentController extends Controller {
     getInstrumentGain(nInstruments, i) {
-        let l = i / nInstruments / 2. - 0.25;
-        let r = (i + 1) / nInstruments / 2. - 0.25;
-        let dist =  Math.abs((r - l) / 2. + l - this.handPoseAnalyzer.handDistX);
-        return (dist < 0.35)? 1 - dist / 0.35 : 0;
+        const w = 0.5 / nInstruments;
+        const l = i / nInstruments / 2. - w;
+        const r = (i + 1) / nInstruments / 2. - w;
+        const dist =  Math.abs((r - l) / 2. + l - this.handPoseAnalyzer.handDistX);
+        return (dist < w)? 1 - dist / w : 0;
+    }
+
+    getInstrumentTone(nInstruments, i) {
+        return this.handPoseAnalyzer.handLength;
     }
 
     getNoteActive(nNotes, i) {
@@ -103,22 +159,72 @@ export class InstrumentController extends Controller {
     }
 
     getChordType(nChords) {
-        //return (this.handPoseAnalyzer.thumbAngle < 20)? 0 : 1; // only change between minor and major here
-        return Math.round((this.handPoseAnalyzer.handAngle - 45) / 135. * (nChords - 1));
+        return (this.handPoseAnalyzer.thumbAngle < 20)? 0 : 1; // only change between minor and major here
     }
 
     getFrequency(nSteps) {
         return nSteps - (this.handPoseAnalyzer.handDistY + 0.5) * nSteps;
+    }
+
+    getArpeggioContribution() {
+        if (this.handPoseAnalyzer.handAngle > 180) {
+            return 1.;
+        } else if (this.handPoseAnalyzer.handAngle > 105) {
+            return clip ((this.handPoseAnalyzer.handAngle - 105.) / 20.);
+        } else if (this.handPoseAnalyzer.handAngle < 85) {
+            return clip((85 - this.handPoseAnalyzer.handAngle) / 10.);
+        } else {
+            return 0.;
+        }
+    }
+
+    getArpeggioSpeed() {
+        if (this.handPoseAnalyzer.handAngle > 180) {
+            return 1. - clip(Math.abs(270 - this.handPoseAnalyzer.handAngle) / 70.);
+        } else if (this.handPoseAnalyzer.handAngle > 90) {
+            return 1. - clip((this.handPoseAnalyzer.handAngle - 110.) / 70.);
+        } else {
+            return 1. - clip( (80 - this.handPoseAnalyzer.handAngle) / 45.);
+        }
+
+    }
+
+    getArpeggioDirection(nDirections) {
+        if (this.handPoseAnalyzer.handAngle > 180) {
+            return 2;
+        } else if (this.handPoseAnalyzer.handAngle > 105) {
+            return 0;
+        } else if (this.handPoseAnalyzer.handAngle < 85) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
 
 
 export class EffectController extends Controller {
     getEffectTone(nEffects, i) {
-        return (this.handPoseAnalyzer.fingerIsExtended[i+1])? Math.min(1., Math.max(0., (this.handPoseAnalyzer.fingerExtension[i+1] - 0.9) / 0.4)) : 0.;
+        return (this.handPoseAnalyzer.fingerIsExtended[i])? this.handPoseAnalyzer.fingerExtension[i] : 0.;
     }
 
     getEffectWetness(nEffects, i) {
-        return this.handPoseAnalyzer.handAngle / 180.;
+        return (this.handPoseAnalyzer.fingerIsExtended[i])? this.handPoseAnalyzer.handLength : 0;
+    }
+
+    getLowpassValue() {
+        if (this.handPoseAnalyzer.handAngle > 90) {
+            return 0.;
+        } else {
+            return clip((85 - this.handPoseAnalyzer.handAngle) / 40.);
+        }
+    }
+
+    getHighpassValue() {
+        if (this.handPoseAnalyzer.handAngle > 90 && this.handPoseAnalyzer.handAngle < 180) {
+            return clip((this.handPoseAnalyzer.handAngle - 95) / 85);
+        } else {
+            return 0.;
+        }
     }
 }
