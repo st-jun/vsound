@@ -84,7 +84,7 @@ export function createChordSlider(synthCollection) {
   newDisplay.textContent = `${description}: ${synthCollection.chordIndex}`;
 
   newSlider.addEventListener('input', () => {
-    synthCollection.changeChord(newSlider.value);
+    synthCollection.setChord(newSlider.value);
     newDisplay.textContent = `${description}: ${synthCollection.chordIndex}`;
   });
 

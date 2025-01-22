@@ -1,8 +1,10 @@
-import {clip} from "./util.js";
+import {clip} from "util";
+import {EffectControllable} from "./controller.js";
 
 
-export default class EffectChain {
+export default class EffectChain extends EffectControllable{
     constructor() {
+        super();
         this.effects = [];
 
         this.lowpass = new Tone.Filter({

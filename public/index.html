@@ -4,17 +4,39 @@
 		<meta charset="utf-8" />
 		<title>VSound</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script type="importmap">
+			{
+              "imports": {
+      			"three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
+        		"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/",
+                "camera": "../src/camera.js",
+                "connector": "../src/connector.js",
+                "controlElements": "../src/control_elements.js",
+                "controller": "../src/controller.js",
+                "effectStage": "../src/effect_stage.js",
+                "handPoseAnalyzer": "../src/hand_pose_analyzer.js",
+                "handPoseDetector": "../src/hand_pose_detector.js",
+                "init": "../src/init.js",
+                "masteringStage": "../src/mastering_stage.js",
+                "oscillatorStage": "../src/oscillator_stage.js",
+                "synthesizer": "../src/synthesizer.js",
+                "util": "../src/util.js",
+                "visualization": "../src/visualization.js"
+              }
+            }
+		</script>
+
+		<!-- Tone.js -->
+		<script src="https://unpkg.com/tone"></script>
+
+		<!-- Mediapipe -->
+		<script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js" type="module" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
 	</head>
 
 	<body></body>
 
-	<!-- Tone.js -->
-	<script src="https://unpkg.com/tone"></script>
-
-	<!-- Mediapipe -->
-	<script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js" type="module" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
 
 	<!-- Entry module -->
 	<script src="../src/init.js" type="module"></script>

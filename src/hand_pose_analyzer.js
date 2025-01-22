@@ -1,4 +1,4 @@
-import {angleDeg, norm, clip} from "./util.js";
+import {angleDeg, norm, clip} from "util";
 
 
 export default class HandPoseAnalyzer {

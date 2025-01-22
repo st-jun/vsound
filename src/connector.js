@@ -15,7 +15,7 @@ export default class Connector {
             }
         }
 
-        this.ui.draw(this.handPoseAnalyzers);
+        //this.ui.drawOverlay(this.handPoseAnalyzers);
     }
 
 

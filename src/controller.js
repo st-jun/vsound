@@ -1,5 +1,63 @@
-import SynthCollection from "./oscillator_stage.js";
-import {clip} from "./util.js";
+import SynthCollection from "oscillatorStage";
+import {clip} from "util";
+
+
+export class SynthControllable {
+    setFrequencyStep(frequencyIndex) {
+        return undefined;
+    }
+
+    setChord(chordIndex) {
+        return undefined;
+    };
+
+    setInstrumentGain(index, gain) {
+        return undefined;
+    }
+
+    setInstrumentTone(index, tone) {
+        return undefined;
+    }
+
+    addChordNote(index) {
+        return undefined;
+    }
+
+    removeChordNote(index) {
+        return undefined;
+    }
+
+    setArpeggioContribution(arpeggioContribution) {
+        return undefined;
+    }
+
+    setArpeggioSpeed(speed) {
+        return undefined;
+    }
+
+    setArpeggioDirection(index) {
+        return undefined;
+    }
+}
+
+
+export class EffectControllable {
+    setEffectTone(index, tone) {
+        return undefined;
+    }
+
+    setEffectWetness(index, wetness) {
+        return undefined;
+    }
+
+    setHighpassFilter(value) {
+        return undefined;
+    }
+
+    setLowpassFilter(value) {
+        return undefined;
+    }
+}
 
 
 class Controller {
@@ -63,7 +121,10 @@ class Controller {
         return null;
     }
 
-    setParameters = () => {
+    setParameters = (synthControllable = null, effectControllable = null) => {
+        if (synthControllable === null) synthControllable = this.synthCollection;
+        if (effectControllable === null) effectControllable = this.effectChain;
+
         // limit updates
         const now = performance.now();
         if (now - this.lastIter >= this.minIterDuration) {
@@ -79,61 +140,61 @@ class Controller {
 
             // chord type
             result = this.getChordType(SynthCollection.chords.length);
-            if (result !== null) this.synthCollection.changeChord(result);
+            if (result !== null) synthControllable.setChord(result);
 
             // chord notes
             for (let i = 0; i < this.synthCollection.currentChord.length; i++) {
                 result = this.getNoteActive(this.synthCollection.currentChord.length, i);
                 if (result !== null) {
                     if (result === true) {
-                        this.synthCollection.addChordNote(i);
+                        synthControllable.addChordNote(i);
                     } else{
-                        this.synthCollection.removeChordNote(i);
+                        synthControllable.removeChordNote(i);
                     }
                 }
             }
 
             // arpeggio
             result = this.getArpeggioContribution();
-            if (result !== null) this.synthCollection.setArpeggioContribution(result);
+            if (result !== null) synthControllable.setArpeggioContribution(result);
             result = this.getArpeggioSpeed();
-            if (result !== null) this.synthCollection.setArpeggioSpeed(result);
+            if (result !== null) synthControllable.setArpeggioSpeed(result);
             result = this.getArpeggioDirection(this.synthCollection.arpeggioDirections.length);
-            if (result !== null) this.synthCollection.setArpeggioDirection(result);
+            if (result !== null) synthControllable.setArpeggioDirection(result);
 
             // frequency / detune
             result = this.getFrequency(SynthCollection.chordProgressions[0].length);
-            if (result !== null) this.synthCollection.setFrequencyStep(result);
+            if (result !== null) synthControllable.setFrequencyStep(result);
 
             // instrument gains
             for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
                 result = this.getInstrumentGain(this.synthCollection.synthesizers.length, i);
-                if (result !== null) this.synthCollection.setInstrumentGain(i, result);
+                if (result !== null) synthControllable.setInstrumentGain(i, result);
             }
 
             // instrument tones
             for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
                 result = this.getInstrumentTone(this.synthCollection.synthesizers.length, i);
-                if (result !== null) this.synthCollection.setInstrumentTone(i, result);
+                if (result !== null) synthControllable.setInstrumentTone(i, result);
             }
 
             // effect tone
             for (let i = 0; i < this.effectChain.effects.length; i++) {
                 result = this.getEffectTone(this.effectChain.effects.length, i);
-                if (result !== null) this.effectChain.setEffectTone(i, result);
+                if (result !== null) effectControllable.setEffectTone(i, result);
             }
 
             // effect wetness
             for (let i = 0; i < this.effectChain.effects.length; i++) {
                 result = this.getEffectWetness(this.effectChain.effects.length, i);
-                if (result !== null) this.effectChain.setEffectWetness(i, result);
+                if (result !== null) effectControllable.setEffectWetness(i, result);
             }
 
             // filter
             result = this.getLowpassValue();
-            if (result !== null) this.effectChain.setLowpassFilter(result);
+            if (result !== null) effectControllable.setLowpassFilter(result);
             result = this.getHighpassValue();
-            if (result !== null) this.effectChain.setHighpassFilter(result);
+            if (result !== null) effectControllable.setHighpassFilter(result);
 
             this.settingParameters = false;
         }
@@ -216,13 +277,13 @@ export class EffectController extends Controller {
         if (this.handPoseAnalyzer.handAngle > 90) {
             return 0.;
         } else {
-            return clip((85 - this.handPoseAnalyzer.handAngle) / 40.);
+            return clip((90 - this.handPoseAnalyzer.handAngle) / 30);
         }
     }
 
     getHighpassValue() {
         if (this.handPoseAnalyzer.handAngle > 90 && this.handPoseAnalyzer.handAngle < 180) {
-            return clip((this.handPoseAnalyzer.handAngle - 95) / 85);
+            return clip((this.handPoseAnalyzer.handAngle - 90) / 30);
         } else {
             return 0.;
         }

@@ -1,4 +1,5 @@
-import {clip} from "./util.js";
+import {clip} from "util";
+import {SynthControllable} from "./controller.js";
 
 
 class Chords {
@@ -40,12 +41,13 @@ class Chords {
     ];
 }
 
-export default class SynthCollection {
+export default class SynthCollection extends SynthControllable{
 
     static chords = [Chords.major, Chords.minor, Chords.power];
     static chordProgressions = [Chords.powerProgression, Chords.majorProgression, Chords.minorProgression];
 
     constructor(synthesizers, outRoute) {
+        super();
         this.chordGain = new Tone.Gain(0.);
         this.arpeggioGain = new Tone.Gain(0.);
         this.chordGain.connect(outRoute);
@@ -107,7 +109,7 @@ export default class SynthCollection {
         }
     }
 
-    changeChord(chordIndex) {
+    setChord(chordIndex) {
         chordIndex = Math.round(chordIndex);
 
         if (chordIndex !== this.chordIndex) {
