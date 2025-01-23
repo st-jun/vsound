@@ -9,7 +9,7 @@ export function norm(x, y) {
 }
 
 
-export function angleRad(x0, y0, x1, y1) {
+export function angleRad(x0, y0, x1, y1, minAngle = false) {
     const dotProduct = x0 * x1 + y0 * y1;
 
     const magnitudeA = norm(x0, y0);
@@ -18,15 +18,17 @@ export function angleRad(x0, y0, x1, y1) {
     const cosTheta = dotProduct / (magnitudeA * magnitudeB);
     let angle = Math.acos(cosTheta);
 
-    const crossProduct = x0 * y1 - x1 * y0;
-    if (crossProduct < 0) {
-        angle = 2 * Math.PI - angle;
+    if (!minAngle) {
+        const crossProduct = x0 * y1 - x1 * y0;
+        if (crossProduct < 0) {
+            angle = 2 * Math.PI - angle;
+        }
     }
 
     return angle;
 }
 
 
-export function angleDeg(x0, y0, x1, y1) {
-    return angleRad(x0, y0, x1, y1) * (180. / Math.PI);
+export function angleDeg(x0, y0, x1, y1, minAngle = false) {
+    return angleRad(x0, y0, x1, y1, minAngle) * (180. / Math.PI);
 }

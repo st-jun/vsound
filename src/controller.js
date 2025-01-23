@@ -142,14 +142,16 @@ class Controller {
             result = this.getChordType(SynthCollection.chords.length);
             if (result !== null) synthControllable.setChord(result);
 
-            // chord notes
-            for (let i = 0; i < this.synthCollection.currentChord.length; i++) {
-                result = this.getNoteActive(this.synthCollection.currentChord.length, i);
-                if (result !== null) {
-                    if (result === true) {
-                        synthControllable.addChordNote(i);
-                    } else{
-                        synthControllable.removeChordNote(i);
+            // chord note
+            if (this.synthCollection.currentChord) {
+                for (let i = 0; i < this.synthCollection.currentChord.length; i++) {
+                    result = this.getNoteActive(this.synthCollection.currentChord.length, i);
+                    if (result !== null) {
+                        if (result === true) {
+                            synthControllable.addChordNote(i);
+                        } else {
+                            synthControllable.removeChordNote(i);
+                        }
                     }
                 }
             }
@@ -220,11 +222,12 @@ export class InstrumentController extends Controller {
     }
 
     getChordType(nChords) {
-        return (this.handPoseAnalyzer.thumbAngle < 20)? 0 : 1; // only change between minor and major here
+        //return (this.handPoseAnalyzer.thumbAngle < 20)? 0 : 1; // only change between minor and major here
+        return Math.round(this.handPoseAnalyzer.thumbAngle / 30)
     }
 
     getFrequency(nSteps) {
-        return nSteps - (this.handPoseAnalyzer.handDistY + 0.5) * nSteps;
+        return Math.round(nSteps - (this.handPoseAnalyzer.handDistY + 0.5) * nSteps);
     }
 
     getArpeggioContribution() {

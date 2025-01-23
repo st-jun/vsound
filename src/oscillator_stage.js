@@ -2,7 +2,7 @@ import {clip} from "util";
 import {SynthControllable} from "./controller.js";
 
 
-class Chords {
+export class Chords {
     static major = ["C4", "E4",  "G4", "Bb4"];
     static minor = ["C4", "Eb4", "G4", "Bb4"];
     static power = ["C4", "G4", "C5"];
@@ -39,12 +39,27 @@ class Chords {
         ["B4", "F#5", "B5", "F#6"],
         ["C5", "G5", "C6", "G6"]
     ];
+
+    static octave = [
+        "C",
+        "Db",
+        "D",
+        "Eb",
+        "E",
+        "F",
+        "F#",
+        "G",
+        "Ab",
+        "A",
+        "Bb",
+        "B"
+    ];
 }
 
 export default class SynthCollection extends SynthControllable{
 
     static chords = [Chords.major, Chords.minor, Chords.power];
-    static chordProgressions = [Chords.powerProgression, Chords.majorProgression, Chords.minorProgression];
+    static chordProgressions = [Chords.majorProgression, Chords.minorProgression, Chords.powerProgression];
 
     constructor(synthesizers, outRoute) {
         super();
@@ -67,6 +82,7 @@ export default class SynthCollection extends SynthControllable{
         this.currentChord = Chords.minor;
 
         this.arpeggioDirections = ["up", "down", "random"];
+        this.bpm = 1;
         this.arpeggioSpeeds = [];
         for (let i = 4; i <= 9; i++) {
             this.arpeggioSpeeds.push(Math.pow(2, i));
@@ -82,7 +98,7 @@ export default class SynthCollection extends SynthControllable{
         );
         this.arpeggio.interval = "16n";
         Tone.Transport.start();
-        Tone.Transport.bpm.value = 120;
+        Tone.Transport.bpm.value = this.bpm;
         this.arpeggio.start();
     }
 
@@ -93,7 +109,7 @@ export default class SynthCollection extends SynthControllable{
             this.frequencyIndex = frequencyIndex;
             this.currentChord = SynthCollection.chordProgressions[this.chordIndex][this.frequencyIndex];
 
-            if (this.currentIndices.length > 0) {
+            if (this.currentIndices.length > 0 && this.currentChord) {
                 let oldNotes = this.currentNotes;
                 this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
 
@@ -195,7 +211,8 @@ export default class SynthCollection extends SynthControllable{
     }
 
     setArpeggioSpeed(speed) {
-        Tone.Transport.bpm.value = this.arpeggioSpeeds[Math.round(speed * (this.arpeggioSpeeds.length-1))];
+        this.bpm = this.arpeggioSpeeds[Math.round(speed * (this.arpeggioSpeeds.length-1))];
+        Tone.Transport.bpm.value = this.bpm;
     }
 
     setArpeggioDirection(index) {

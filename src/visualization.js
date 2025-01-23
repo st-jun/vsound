@@ -1,9 +1,10 @@
 import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import {EffectControllable} from "./controller.js";
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {EffectControllable, SynthControllable} from "./controller.js";
+import SynthCollection, {Chords} from "./oscillator_stage.js";
 
 
 
@@ -36,6 +37,7 @@ class BoxTorus {
             const lineMaterial = new THREE.LineBasicMaterial({color: colors[i % colors.length]});
             const meshMaterial = new THREE.MeshBasicMaterial({color: colors[i % colors.length]});
             meshMaterial.transparent = true;
+            lineMaterial.transparent = true;
             //meshMaterial.opacity = 0.3;
             let box;
             if (fullBox) box = new THREE.Mesh(boxGeometry, meshMaterial);
@@ -50,6 +52,10 @@ class BoxTorus {
         }
     }
 
+    setOpacity(index, opacity) {
+        this.boxes[index].material.opacity = opacity;
+    }
+
     setColor(index, r, g, b) {
         this.boxes[index].material.color.set(r, g, b);
     }
@@ -61,6 +67,18 @@ class BoxTorus {
     setScales(index, x, y, z) {
         this.boxes[index].scale.x = x;
         this.boxes[index].scale.y = y;
+        this.boxes[index].scale.z = z;
+    }
+
+    setScaleX(index, x) {
+        this.boxes[index].scale.x = x;
+    }
+
+    setScaleY(index, y) {
+        this.boxes[index].scale.y = y;
+    }
+
+    setScaleZ(index, z) {
         this.boxes[index].scale.z = z;
     }
 }
@@ -86,6 +104,12 @@ class Potentiometer {
 
     setAngleOffset(angle) {
         this.model.rotation.y =  angle;
+    }
+
+    setScales(x, y, z) {
+        this.model.scale.x = x;
+        this.model.scale.y = y;
+        this.model.scale.z = z;
     }
 }
 
@@ -128,13 +152,13 @@ class UIScene {
         const boxSize = 0.5;
         const torusRadius = 2;
         const numBoxes = 12;
-        console.log(synthCollection, effectChain);
         this.nLinesPerEffect = 3;
         this.octaveRing = new BoxTorus(this.scene, numBoxes, [boxSize, boxSize, boxSize], torusRadius, rainbowColors, false);
         this.effectLines = new BoxTorus(this.scene, effectChain.effects.length * this.nLinesPerEffect, [0.3, 0.3, 1000], 3, ["#000000"], true, [0, 0, -100]);
         this.filterPoti = new Potentiometer(this.scene);
 
-        this.sceneEffects = new UISceneEffects(this.effectLines, this.filterPoti, this.nLinesPerEffect);
+        this.sceneSynths = new UISceneSynths(this.camera, this.octaveRing, this.filterPoti, synthCollection);
+        this.sceneEffects = new UISceneEffects(this.camera, this.effectLines, this.filterPoti, this.nLinesPerEffect);
 
         this.drawScene();
     }
@@ -144,7 +168,7 @@ class UIScene {
         requestAnimationFrame( this.drawScene );
 
         for (let controller of this.controllers) {
-            controller.setParameters(null, this.sceneEffects);
+            controller.setParameters(this.sceneSynths, this.sceneEffects);
         }
 
         this.composer.render();
@@ -152,9 +176,77 @@ class UIScene {
 }
 
 
-class UISceneEffects extends EffectControllable {
-    constructor(effectLines, filterPoti, nLinesPerEffect) {
+class UISceneSynths extends SynthControllable {
+    constructor(camera, octaveRing, filterPoti, synthCollection) {
         super();
+        this.camera = camera;
+        this.octaveRing = octaveRing;
+        this.filterPoti = filterPoti;
+        this.synthCollection = synthCollection;
+        this.clock = new THREE.Clock();
+    }
+
+    setFrequencyStep(frequencyIndex) {
+        for (let i = 0; i < Chords.octave.length; i++) {
+            let found = false;
+            for (let currentNote of this.synthCollection.currentNotes) {
+                if (currentNote !== null && currentNote.length - 1 === Chords.octave[i].length && currentNote.substring(0, currentNote.length - 1) === Chords.octave[i]) {
+                    found = true;
+                    this.octaveRing.setOpacity(i, 1);
+                }
+            }
+            if (!found) {
+                this.octaveRing.setOpacity(i, 0);
+            }
+        }
+    }
+
+    setChord(chordIndex) {
+        return undefined;
+    };
+
+    setInstrumentGain(index, gain) {
+        return undefined;
+    }
+
+    setInstrumentTone(index, tone) {
+        if (tone > 0 && index === 0) {
+            this.camera.fov = (1 - tone) * 90;
+            this.camera.updateProjectionMatrix();
+        }
+    }
+
+    addChordNote(index) {
+        return undefined;
+    }
+
+    removeChordNote(index) {
+        return undefined;
+    }
+
+    setArpeggioContribution(arpeggioContribution) {
+        return undefined;
+    }
+
+    setArpeggioSpeed(speed) {
+        const secondsPerBeat = 60 / this.synthCollection.bpm;
+        const elapsedTime = this.clock.getElapsedTime();
+
+        const pulse = Math.sin((2 * Math.PI * elapsedTime) / secondsPerBeat);
+        const scale = (this.synthCollection.currentIndices.length > 0) ? 1 + 0.05 * Math.abs(pulse) : 1;
+
+        this.filterPoti.setScales(scale, 1, scale);
+    }
+
+    setArpeggioDirection(index) {
+        return undefined;
+    }
+}
+
+class UISceneEffects extends EffectControllable {
+    constructor(camera, effectLines, filterPoti, nLinesPerEffect) {
+        super();
+        this.camera = camera;
         this.effectLines = effectLines;
         this.nLinesPerEffect = nLinesPerEffect;
         this.filterPoti = filterPoti;
@@ -167,7 +259,9 @@ class UISceneEffects extends EffectControllable {
     }
 
     setEffectWetness(index, wetness) {
-        this.effectLines.setScales(index, 1, 1, wetness * 1000);
+        // for (let i = 0; i < this.nLinesPerEffect; i++) {
+        //     this.effectLines.setScaleZ(index * this.nLinesPerEffect + i, wetness * 1000);
+        // }
     }
 
     setHighpassFilter(value) {

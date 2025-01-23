@@ -42,15 +42,13 @@ export default class HandPoseAnalyzer {
             this.handAngle = clip(angleDeg(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y, 1., 0), 0, 360);
             this.thumbAngle = clip(angleDeg(
                 handPose[4].x - handPose[1].x, handPose[4].y - handPose[1].y,
-                handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y), 0, 45);
+                handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y, true), 0, 40);
 
             for (let i = 0; i < this.fingerExtension.length; i++) {
                 if (i === 0) {
                     // thumb
-                    this.fingerExtension[i] =
-                        clip((norm(handPose[i * 4 + 4].x - handPose[0].x, handPose[i * 4 + 4].y - handPose[0].y) /
-                            norm(handPose[i * 4 + 2].x - handPose[0].x, handPose[i * 4 + 2].y - handPose[0].y) - 1.4) / 0.3);
-                    this.fingerIsExtended[i] = this.fingerExtension[i] > 0;
+                    this.fingerExtension[i] = clip(this.thumbAngle / 40);
+                    this.fingerIsExtended[i] = this.thumbAngle > 15;
                 } else {
                     // fingers
                     this.fingerExtension[i] =
