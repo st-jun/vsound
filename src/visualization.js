@@ -3,8 +3,8 @@ import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
-import {EffectControllable, SynthControllable} from "./controller.js";
-import SynthCollection, {Chords} from "./oscillator_stage.js";
+import {EffectControllable, SynthControllable} from "controller";
+import SynthCollection, {Chords} from "oscillatorStage";
 
 
 
@@ -128,6 +128,7 @@ class UIScene {
 
         this.camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 100 );
         this.camera.position.set( 0, 0, 20);
+        this.camera.lookAt(0, 0, 0);
         this.scene.add( this.camera );
 
         this.scene.add( new THREE.AmbientLight( 0xcccccc ) );
@@ -160,18 +161,26 @@ class UIScene {
         this.sceneSynths = new UISceneSynths(this.camera, this.octaveRing, this.filterPoti, synthCollection);
         this.sceneEffects = new UISceneEffects(this.camera, this.effectLines, this.filterPoti, this.nLinesPerEffect);
 
+        this.lastUpdate = performance.now();
         this.drawScene();
     }
 
 
     drawScene = () => {
+        const now = performance.now();
+
         requestAnimationFrame( this.drawScene );
 
-        for (let controller of this.controllers) {
-            controller.setParameters(this.sceneSynths, this.sceneEffects);
+        if (now - this.lastUpdate > 15) {
+            this.lastUpdate = now;
+
+            for (let controller of this.controllers) {
+                controller.setParameters(this.sceneSynths, this.sceneEffects);
+            }
+
+            this.composer.render();
         }
 
-        this.composer.render();
     }
 }
 
@@ -211,7 +220,7 @@ class UISceneSynths extends SynthControllable {
 
     setInstrumentTone(index, tone) {
         if (tone > 0 && index === 0) {
-            this.camera.fov = (1 - tone) * 90;
+            this.camera.fov = (tone) * 40 + 20;
             this.camera.updateProjectionMatrix();
         }
     }
@@ -250,18 +259,28 @@ class UISceneEffects extends EffectControllable {
         this.effectLines = effectLines;
         this.nLinesPerEffect = nLinesPerEffect;
         this.filterPoti = filterPoti;
+        this.cameraRange = 1;
     }
 
     setEffectTone(index, tone) {
         for (let i = 0; i < this.nLinesPerEffect; i++) {
-            this.effectLines.setColorHSL(index * this.nLinesPerEffect + i, tone, 1, tone * 0.5);
+            if (tone < 0.02)  {
+                this.effectLines.setOpacity(index * this.nLinesPerEffect + i, 0);
+            } else {
+                this.effectLines.setOpacity(index * this.nLinesPerEffect + i, 1);
+                this.effectLines.setColorHSL(index * this.nLinesPerEffect + i, tone, 1, tone * 0.5);
+            }
         }
     }
 
     setEffectWetness(index, wetness) {
-        // for (let i = 0; i < this.nLinesPerEffect; i++) {
-        //     this.effectLines.setScaleZ(index * this.nLinesPerEffect + i, wetness * 1000);
-        // }
+        if (index >= 5 && wetness > 0) {
+            if      (index === 5) this.camera.position.y = -wetness * this.cameraRange;
+            else if (index === 6) this.camera.position.y = wetness * this.cameraRange;
+            else if (index === 7) this.camera.position.x = -wetness * this.cameraRange;
+            else if (index === 8) this.camera.position.x = wetness * this.cameraRange;
+            this.camera.lookAt(0, 0, 0);
+        }
     }
 
     setHighpassFilter(value) {
@@ -316,8 +335,8 @@ class UIOverlay {
             // palm
             this.drawCircle(
                 this.ctx,
-                this.getX((1. - handPoseAnalyzer.palmX)),
-                this.getY(handPoseAnalyzer.palmY),
+                this.getX((1. - handPoseAnalyzer.handX)),
+                this.getY(handPoseAnalyzer.handY),
                 this.getX(handPoseAnalyzer.handLength / 10.),
                 "red");
 

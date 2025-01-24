@@ -8,11 +8,11 @@ export default class HandPoseAnalyzer {
         this.referenceX = controlPoint[0];
         this.referenceY = controlPoint[1];
 
-        this.palmX = 0.; // [0, 1]
-        this.palmY = 0.; // [0, 1]
+        this.handX = 0.; // [0, 1]
+        this.handY = 0.; // [0, 1]
 
-        this.handDistX = 0.;   // -> [-0.5, 0.5]
-        this.handDistY = 0.;   // -> [-0.5, 0.5]
+        this.handRefX = 0.;   // -> [-0.5, 0.5]
+        this.handRefY = 0.;   // -> [-0.5, 0.5]
         this.handLength = 0.;  // [0,05, 0.5]  -> [0, 1]
         this.handAngle = 0.;   // [0, 360]
         this.thumbAngle = 0.;  // [0, 45]
@@ -34,12 +34,15 @@ export default class HandPoseAnalyzer {
         if (!this.isAnalyzing) {
             this.isAnalyzing = true;
 
-            this.palmX = clip((handPose[5].x + handPose[17].x + handPose[0].x) / 3.);
-            this.palmY = clip((handPose[5].y + handPose[17].y + handPose[0].y) / 3.);
-            this.handDistX = clip((handPose[0].x + handPose[5].x + handPose[9].x + handPose[13].x + handPose[17].x) / 5. - this.referenceX, -0.5, 0.5);
-            this.handDistY = clip((handPose[0].y + handPose[5].y + handPose[9].y + handPose[13].y + handPose[17].y) / 5. - this.referenceY, -0.5, 0.5);
-            this.handLength = clip((norm(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y) - 0.05) / 0.3);
-            this.handAngle = clip(angleDeg(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y, 1., 0), 0, 360);
+            this.handX = clip((handPose[5].x + handPose[17].x + handPose[0].x) / 3.);
+            this.handY = clip((handPose[5].y + handPose[17].y + handPose[0].y) / 3.);
+            this.handAngle = clip(angleDeg(handPose[13].x - handPose[0].x, handPose[13].y - handPose[0].y, 1., 0), 0, 360);
+
+            this.handRefX = clip((handPose[0].x + handPose[5].x + handPose[9].x + handPose[13].x + handPose[17].x) / 5. - this.referenceX, -0.5, 0.5);
+            this.handRefY = clip((handPose[0].y + handPose[5].y + handPose[9].y + handPose[13].y + handPose[17].y) / 5. - this.referenceY, -0.5, 0.5);
+            this.handRefAngle = clip(angleDeg(this.handX - this.referenceX, this.handY - this.referenceY, 1., 0), 0, 360);
+
+            this.handLength = clip((norm(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y) - 0.1) / 0.25);
             this.thumbAngle = clip(angleDeg(
                 handPose[4].x - handPose[1].x, handPose[4].y - handPose[1].y,
                 handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y, true), 0, 40);

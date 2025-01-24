@@ -209,7 +209,7 @@ export class InstrumentController extends Controller {
         const w = 0.5 / nInstruments;
         const l = i / nInstruments / 2. - w;
         const r = (i + 1) / nInstruments / 2. - w;
-        const dist =  Math.abs((r - l) / 2. + l - this.handPoseAnalyzer.handDistX);
+        const dist =  Math.abs((r - l) / 2. + l - this.handPoseAnalyzer.handRefX);
         return (dist < w)? 1 - dist / w : 0;
     }
 
@@ -227,7 +227,7 @@ export class InstrumentController extends Controller {
     }
 
     getFrequency(nSteps) {
-        return Math.round(nSteps - (this.handPoseAnalyzer.handDistY + 0.5) * nSteps);
+        return Math.round(nSteps - (this.handPoseAnalyzer.handRefY + 0.5) * nSteps);
     }
 
     getArpeggioContribution() {
@@ -268,25 +268,48 @@ export class InstrumentController extends Controller {
 
 
 export class EffectController extends Controller {
+    constructor(...opts) {
+        super(...opts);
+        this.rangeMin = 0.02;
+        this.rangeMax = 0.2;
+    }
+
     getEffectTone(nEffects, i) {
-        return (this.handPoseAnalyzer.fingerIsExtended[i])? this.handPoseAnalyzer.fingerExtension[i] : 0.;
+        if (i < 5) {
+            return (this.handPoseAnalyzer.fingerIsExtended[i])? this.handPoseAnalyzer.fingerExtension[i] : 0.;
+        } else {
+            if      (i === 5) return clip(this.handPoseAnalyzer.handRefY /  this.rangeMax - this.rangeMin);
+            else if (i === 6) return clip(this.handPoseAnalyzer.handRefY / -this.rangeMax - this.rangeMin);
+            else if (i === 7) return clip(this.handPoseAnalyzer.handRefX /  this.rangeMax - this.rangeMin);
+            else if (i === 8) return clip(this.handPoseAnalyzer.handRefX / -this.rangeMax - this.rangeMin);
+            else return 0;
+        }
+
     }
 
     getEffectWetness(nEffects, i) {
-        return (this.handPoseAnalyzer.fingerIsExtended[i])? this.handPoseAnalyzer.handLength : 0;
+        if (i < 5) {
+            return (this.handPoseAnalyzer.fingerIsExtended[i]) ? this.handPoseAnalyzer.handLength : 0;
+        } else {
+            if      (i === 5) return clip(this.handPoseAnalyzer.handRefY /  this.rangeMax - this.rangeMin);
+            else if (i === 6) return clip(this.handPoseAnalyzer.handRefY / -this.rangeMax - this.rangeMin);
+            else if (i === 7) return clip(this.handPoseAnalyzer.handRefX /  this.rangeMax - this.rangeMin);
+            else if (i === 8) return clip(this.handPoseAnalyzer.handRefX / -this.rangeMax - this.rangeMin);
+            else return 0;
+        }
     }
 
     getLowpassValue() {
         if (this.handPoseAnalyzer.handAngle > 90) {
             return 0.;
         } else {
-            return clip((90 - this.handPoseAnalyzer.handAngle) / 30);
+            return clip((90 - this.handPoseAnalyzer.handAngle) / 30, 0.01);
         }
     }
 
     getHighpassValue() {
         if (this.handPoseAnalyzer.handAngle > 90 && this.handPoseAnalyzer.handAngle < 180) {
-            return clip((this.handPoseAnalyzer.handAngle - 90) / 30);
+            return clip((this.handPoseAnalyzer.handAngle - 90) / 30, 0.01);
         } else {
             return 0.;
         }

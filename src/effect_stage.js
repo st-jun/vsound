@@ -1,11 +1,11 @@
 import {clip} from "util";
-import {EffectControllable} from "./controller.js";
+import {EffectControllable} from "controller";
 
 
 export default class EffectChain extends EffectControllable{
-    constructor() {
+    constructor(nEffects) {
         super();
-        this.effects = [];
+        this.effects = new Array(nEffects).fill(null);
 
         this.lowpass = new Tone.Filter({
             type: "lowpass",
@@ -20,6 +20,9 @@ export default class EffectChain extends EffectControllable{
             rolloff: -48,
             Q: 1
         });
+
+        this.lowpass.connect(this.highpass);
+        this.currentOut = this.highpass;
     }
 
     connectIn(inRoute) {
@@ -27,17 +30,13 @@ export default class EffectChain extends EffectControllable{
     }
 
     connectOut(outRoute) {
-        this.effects[this.effects.length-1].effect.connect(outRoute);
+        this.currentOut.connect(outRoute);
     }
 
-    add(effect) {
-        this.effects.push(effect);
-        if (this.effects.length > 1) {
-            this.effects[this.effects.length - 2].effect.connect(this.effects[this.effects.length - 1].effect);
-        } else {
-            this.lowpass.connect(this.highpass);
-            this.highpass.connect(this.effects[0].effect);
-        }
+    add(effect, index) {
+        this.effects[index] = effect;
+        this.currentOut.connect(effect.effect);
+        this.currentOut = effect.effect;
     }
 
     setEffectTone(index, tone) {
@@ -202,7 +201,7 @@ export class ChebyshevEffect extends Effect {
 
     setTone(newTone) {
         this.effect.set({
-            order: Math.round(50 * newTone),
+            order: Math.round(20 * newTone),
             oversample: (newTone > 0.6) ? "4x" : ((newTone > 0.3) ? "2x" : "none")
         })
     }
@@ -250,6 +249,110 @@ export class FeedbackDelayEffect extends Effect {
         this.effect.set({
             delayTime: Math.round(2.5 * newTone) / 5.,
             //feedback: 0.5 + 0.3 * newTone,
+        })
+    }
+}
+
+
+export class FreeverbEffect extends Effect {
+    constructor() {
+        super(Tone.Freeverb);
+    }
+
+    getDefaultParameters() {
+        return {
+            roomSize: 1,
+            dampening: 10000,
+        };
+    }
+
+    setTone(newTone) {
+        this.effect.set({
+            roomSize: newTone,
+            dampening: 10000 * newTone,
+        })
+    }
+}
+
+
+export class ReverbEffect extends Effect {
+    constructor() {
+        super(Tone.Reverb);
+    }
+
+    getDefaultParameters() {
+        return {
+            decay: 0.5,
+            preDelay: 0
+        };
+    }
+
+    setTone(newTone) {
+        this.effect.set({
+            decay: 10 * newTone + 0.01,
+            preDelay: 0.1 * newTone + 0.01
+        })
+    }
+}
+
+
+export class TremoloEffect extends Effect {
+    constructor() {
+        super(Tone.Tremolo);
+    }
+
+    getDefaultParameters() {
+        return {
+            frequency: 100,
+            depth: 1,
+        };
+    }
+
+    setTone(newTone) {
+        this.effect.set({
+            frequency: 100 * newTone,
+            depth: newTone,
+        })
+    }
+}
+
+
+export class VibratoEffect extends Effect {
+    constructor() {
+        super(Tone.Vibrato);
+    }
+
+    getDefaultParameters() {
+        return {
+            frequency: 10,
+            depth: 1
+        };
+    }
+
+    setTone(newTone) {
+        this.effect.set({
+            frequency: 10 * newTone,
+            depth: newTone
+        })
+    }
+}
+
+
+export class FrequencyShifterEffect extends Effect {
+    constructor(maxShift) {
+        super(Tone.FrequencyShifter);
+        this.maxShift = maxShift;
+    }
+
+    getDefaultParameters() {
+        return {
+            frequency: 0
+        };
+    }
+
+    setTone(newTone) {
+        this.effect.set({
+            frequency: this.maxShift * newTone,
         })
     }
 }

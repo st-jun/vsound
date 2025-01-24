@@ -6,7 +6,8 @@ import EffectChain, {
     AutoWahEffect,
     BitCrusherEffect, ChebyshevEffect, ChorusEffect,
     DistortionEffect, FeedbackDelayEffect,
-    PhaserEffect
+    PhaserEffect, FreeverbEffect, FrequencyShifterEffect,
+    ReverbEffect, TremoloEffect, VibratoEffect
 } from "effectStage";
 import Connector from "connector";
 import HandPoseAnalyzer from "handPoseAnalyzer";
@@ -35,11 +36,18 @@ const masteringStage = new MasteringStage();
 
 // Effects
 const effectChain = new EffectChain();
-effectChain.add(new AutoWahEffect());
-effectChain.add(new PhaserEffect());
-effectChain.add(new ChebyshevEffect());
-effectChain.add(new DistortionEffect());
-effectChain.add(new FeedbackDelayEffect());
+effectChain.add(new AutoWahEffect(), 0);
+effectChain.add(new PhaserEffect(), 8);
+effectChain.add(new ChebyshevEffect(), 6);
+effectChain.add(new DistortionEffect(), 5);
+effectChain.add(new ChorusEffect(), 7);
+effectChain.add(new FrequencyShifterEffect(-5000), 1);
+effectChain.add(new FrequencyShifterEffect(5000), 3);
+//effectChain.add(new ChorusEffect(), 3);
+effectChain.add(new FeedbackDelayEffect(), 4);
+//effectChain.add(new TremoloEffect(), 1);
+effectChain.add(new VibratoEffect(), 2);
+//effectChain.add(new ReverbEffect(), 0);
 effectChain.connectOut(masteringStage.mainGain);
 
 // Synthesizers
