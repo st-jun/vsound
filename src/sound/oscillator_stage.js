@@ -1,5 +1,5 @@
 import {clip} from "util";
-import {SynthControllable} from "./controller.js";
+import {SynthControllable} from "controller";
 
 
 export class Chords {

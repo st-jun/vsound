@@ -12,7 +12,7 @@ import EffectChain, {
 import Connector from "connector";
 import HandPoseAnalyzer from "handPoseAnalyzer";
 import {EffectController, InstrumentController} from "controller";
-import UI from "visualization";
+import UI from "ui";
 import {AMSynthesizer, FMSynthesizer, DuoSynthesizer} from "synthesizer";
 import MasteringStage from "masteringStage";
 
@@ -62,7 +62,7 @@ controllers.push(new InstrumentController(synthCollection, effectChain, handPose
 controllers.push(new EffectController(synthCollection, effectChain, handPoseAnalyzers[1]));
 
 // UI
-const ui = new UI(webcam, controllers, synthCollection, effectChain);
+const ui = new UI(webcam, handPoseAnalyzers, controllers, synthCollection, effectChain);
 
 // Glue everything together
 const connector = new Connector(controlPoints, handPoseAnalyzers, ui);

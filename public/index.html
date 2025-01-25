@@ -9,19 +9,21 @@
               "imports": {
       			"three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
         		"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/",
-                "camera": "../src/camera.js",
-                "connector": "../src/connector.js",
-                "controlElements": "../src/control_elements.js",
-                "controller": "../src/controller.js",
-                "effectStage": "../src/effect_stage.js",
-                "handPoseAnalyzer": "../src/hand_pose_analyzer.js",
-                "handPoseDetector": "../src/hand_pose_detector.js",
-                "init": "../src/init.js",
-                "masteringStage": "../src/mastering_stage.js",
-                "oscillatorStage": "../src/oscillator_stage.js",
-                "synthesizer": "../src/synthesizer.js",
-                "util": "../src/util.js",
-                "visualization": "../src/visualization.js"
+                "camera": "../src/glue/camera.js",
+                "connector": "../src/glue/connector.js",
+                "controlElements": "../src/visual/control_elements.js",
+                "controller": "../src/glue/controller.js",
+                "effectStage": "../src/sound/effect_stage.js",
+                "handPoseAnalyzer": "../src/detection/hand_pose_analyzer.js",
+                "handPoseDetector": "../src/detection/hand_pose_detector.js",
+                "init": "../src/glue/init.js",
+                "masteringStage": "../src/sound/mastering_stage.js",
+                "oscillatorStage": "../src/sound/oscillator_stage.js",
+                "synthesizer": "../src/sound/synthesizer.js",
+                "util": "../src/glue/util.js",
+                "ui": "../src/visual/ui.js",
+                "ui_scene": "../src/visual/ui_scene.js",
+                "ui_overlay": "../src/visual/ui_overlay.js"
               }
             }
 		</script>
@@ -39,5 +41,5 @@
 
 
 	<!-- Entry module -->
-	<script src="../src/init.js" type="module"></script>
+	<script src="../src/glue/init.js" type="module"></script>
 </html>

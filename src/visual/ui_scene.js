@@ -7,7 +7,6 @@ import {EffectControllable, SynthControllable} from "controller";
 import SynthCollection, {Chords} from "oscillatorStage";
 
 
-
 const rainbowColors = [
     "#FF0000",
     "#FF7F00",
@@ -24,97 +23,7 @@ const rainbowColors = [
 ];
 
 
-class BoxTorus {
-    constructor(scene, numBoxes, boxSizes, torusRadius, colors, fullBox, lookAt = [0, 0, 0]) {
-        this.boxes = [];
-
-        const angleStep = (2 * Math.PI) / numBoxes;
-
-        for (let i = 0; i < numBoxes; i++) {
-            const angle = i * angleStep;
-            const boxGeometry = new THREE.BoxGeometry(...boxSizes);
-            const edges = new THREE.EdgesGeometry(boxGeometry);
-            const lineMaterial = new THREE.LineBasicMaterial({color: colors[i % colors.length]});
-            const meshMaterial = new THREE.MeshBasicMaterial({color: colors[i % colors.length]});
-            meshMaterial.transparent = true;
-            lineMaterial.transparent = true;
-            //meshMaterial.opacity = 0.3;
-            let box;
-            if (fullBox) box = new THREE.Mesh(boxGeometry, meshMaterial);
-            else box = new THREE.LineSegments(edges, lineMaterial);
-            const x = torusRadius * Math.cos(angle);
-            const y = torusRadius * Math.sin(angle);
-            const z = 0;
-            box.position.set(x, y, z);
-            box.lookAt(...lookAt);
-            this.boxes.push(box);
-            scene.add(box);
-        }
-    }
-
-    setOpacity(index, opacity) {
-        this.boxes[index].material.opacity = opacity;
-    }
-
-    setColor(index, r, g, b) {
-        this.boxes[index].material.color.set(r, g, b);
-    }
-
-    setColorHSL(index, h, s, l) {
-        this.boxes[index].material.color.setHSL(h, s, l);
-    }
-
-    setScales(index, x, y, z) {
-        this.boxes[index].scale.x = x;
-        this.boxes[index].scale.y = y;
-        this.boxes[index].scale.z = z;
-    }
-
-    setScaleX(index, x) {
-        this.boxes[index].scale.x = x;
-    }
-
-    setScaleY(index, y) {
-        this.boxes[index].scale.y = y;
-    }
-
-    setScaleZ(index, z) {
-        this.boxes[index].scale.z = z;
-    }
-}
-
-
-class Potentiometer {
-    constructor(scene) {
-        this.startAngle = Math.PI + 0.2;
-        const geometry = new THREE.CylinderGeometry( 0.5, 1, 0.4, 32 , 2, true, this.startAngle, 2*Math.PI - 0.4 );
-        const material = new THREE.MeshBasicMaterial( {color: [1,1,1]} );
-        this.model = new THREE.Mesh( geometry, material );
-        this.model.lookAt(0, -1, 0);
-        scene.add( this.model );
-    }
-
-    setColor(r, g, b) {
-        this.model.material.color.set(r, g, b);
-    }
-
-    setColorHSL(h, s, l) {
-        this.model.material.color.setHSL(h, s, l);
-    }
-
-    setAngleOffset(angle) {
-        this.model.rotation.y =  angle;
-    }
-
-    setScales(x, y, z) {
-        this.model.scale.x = x;
-        this.model.scale.y = y;
-        this.model.scale.z = z;
-    }
-}
-
-
-class UIScene {
+export default class UIScene {
     constructor(sceneCanvas, controllers, synthCollection, effectChain) {
         this.controllers = controllers;
 
@@ -280,6 +189,15 @@ class UISceneEffects extends EffectControllable {
             else if (index === 7) this.camera.position.x = -wetness * this.cameraRange;
             else if (index === 8) this.camera.position.x = wetness * this.cameraRange;
             this.camera.lookAt(0, 0, 0);
+
+            for (let i = 0; i < this.nLinesPerEffect; i++) {
+                this.effectLines.setScales(index * this.nLinesPerEffect + i, wetness * 2, wetness * 2, 1);
+            }
+
+        } else if (index < 5) {
+            for (let i = 0; i < this.nLinesPerEffect; i++) {
+                this.effectLines.setScales(index * this.nLinesPerEffect + i, wetness * 2, wetness * 2, 1);
+            }
         }
     }
 
@@ -299,118 +217,93 @@ class UISceneEffects extends EffectControllable {
 }
 
 
-class UIOverlay {
-    constructor(overlayCanvas) {
+class BoxTorus {
+    constructor(scene, numBoxes, boxSizes, torusRadius, colors, fullBox, lookAt = [0, 0, 0]) {
+        this.boxes = [];
 
-    }
+        const angleStep = (2 * Math.PI) / numBoxes;
 
-    getX(normalizedX) {
-        return this.overlayCanvas.width * normalizedX;
-    }
+        for (let i = 0; i < numBoxes; i++) {
+            const lineMaterial = new THREE.LineBasicMaterial({color: colors[i % colors.length]});
+            const meshMaterial = new THREE.MeshBasicMaterial({color: colors[i % colors.length]});
+            meshMaterial.transparent = true;
+            lineMaterial.transparent = true;
 
-    getY(normalizedY) {
-        return this.overlayCanvas.height * normalizedY;
-    }
+            const boxGeometry = new THREE.BoxGeometry(...boxSizes);
+            const edges = new THREE.EdgesGeometry(boxGeometry);
+            let box;
+            if (fullBox) box = new THREE.Mesh(boxGeometry, meshMaterial);
+            else         box = new THREE.LineSegments(edges, lineMaterial);
 
-    drawOverlay = (handPoseAnalyzers) => {
-        if (!this.drawing) {
-            this.drawing = true;
+            const angle = i * angleStep;
+            const x = torusRadius * Math.cos(angle);
+            const y = torusRadius * Math.sin(angle);
+            const z = 0;
+            box.position.set(x, y, z);
+            box.lookAt(...lookAt);
 
-            this.ctx.clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
-
-            this.drawHandOverlay(handPoseAnalyzers);
-            this.drawing = false;
+            this.boxes.push(box);
+            scene.add(box);
         }
     }
 
-    drawCircle(ctx, x, y, radius, color) {
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = color;
-        ctx.fill();
+    setOpacity(index, opacity) {
+        this.boxes[index].material.opacity = opacity;
     }
 
-    drawHandOverlay(handPoseAnalyzers) {
-        for (let handPoseAnalyzer of handPoseAnalyzers) {
-            // palm
-            this.drawCircle(
-                this.ctx,
-                this.getX((1. - handPoseAnalyzer.handX)),
-                this.getY(handPoseAnalyzer.handY),
-                this.getX(handPoseAnalyzer.handLength / 10.),
-                "red");
+    setColor(index, r, g, b) {
+        this.boxes[index].material.color.set(r, g, b);
+    }
 
-            // fingers
-            for (let i = 0; i < handPoseAnalyzer.fingerTipX.length; i++) {
-                if (handPoseAnalyzer.fingerIsExtended[i] || i === 0) {
-                    this.drawCircle(
-                        this.ctx,
-                        this.getX((1. - handPoseAnalyzer.fingerTipX[i])),
-                        this.getY(handPoseAnalyzer.fingerTipY[i]),
-                        this.getX(handPoseAnalyzer.fingerExtension[i] / 100.),
-                        "red");
-                }
-            }
-        }
+    setColorHSL(index, h, s, l) {
+        this.boxes[index].material.color.setHSL(h, s, l);
+    }
+
+    setScales(index, x, y, z) {
+        this.boxes[index].scale.x = x;
+        this.boxes[index].scale.y = y;
+        this.boxes[index].scale.z = z;
+    }
+
+    setScaleX(index, x) {
+        this.boxes[index].scale.x = x;
+    }
+
+    setScaleY(index, y) {
+        this.boxes[index].scale.y = y;
+    }
+
+    setScaleZ(index, z) {
+        this.boxes[index].scale.z = z;
     }
 }
 
 
-export default class UI {
-    constructor(webcam, controllers, synthCollection, effectChain) {
-        this.webcam = webcam;
-        this.initContainer();
-        this.initSceneCanvas();
-        this.initOverlayCanvas();
-
-        this.container.appendChild(this.webcam.video);
-        this.container.appendChild(this.sceneCanvas);
-        this.container.appendChild(this.overlayCanvas);
-        document.body.appendChild(this.container);
-        window.addEventListener('resize', this.resizeCanvas);
-
-        this.controllers = controllers;
-        this.overlay = new UIOverlay();
-        this.scene = new UIScene(this.sceneCanvas, controllers, synthCollection, effectChain);
-
-        this.drawing = false;
+class Potentiometer {
+    constructor(scene) {
+        this.startAngle = Math.PI + 0.2;
+        const geometry = new THREE.CylinderGeometry( 0.5, 1, 0.4, 32 , 2, true, this.startAngle, 2*Math.PI - 0.4 );
+        const material = new THREE.MeshBasicMaterial( {color: [1,1,1]} );
+        this.model = new THREE.Mesh( geometry, material );
+        this.model.lookAt(0, -1, 0);
+        scene.add( this.model );
     }
 
-    initContainer() {
-        this.container = document.createElement('div');
-        this.container.style.position = 'fixed';
-        this.container.style.maxWidth = '100%';
-        this.container.style.maxHeight = '100%';
-        this.container.style.top = '0';
-        this.container.style.left = '0';
+    setColor(r, g, b) {
+        this.model.material.color.set(r, g, b);
     }
 
-    initOverlayCanvas() {
-        this.overlayCanvas = document.createElement('canvas');
-        this.overlayCanvas.style.position = 'fixed';
-        this.overlayCanvas.style.top = '0';
-        this.overlayCanvas.style.left = '0';
-        this.overlayCanvas.addEventListener("click",
-            () => {
-                this.webcam.togglePlay();
-            });
-
-        this.ctx = this.overlayCanvas.getContext('2d');
-
-        this.resizeCanvas();
+    setColorHSL(h, s, l) {
+        this.model.material.color.setHSL(h, s, l);
     }
 
-    initSceneCanvas() {
-        this.sceneCanvas = document.createElement('canvas');
-        this.sceneCanvas.style.position = 'fixed';
-        this.sceneCanvas.style.top = '0';
-        this.sceneCanvas.style.left = '0';
+    setAngleOffset(angle) {
+        this.model.rotation.y =  angle;
     }
 
-    resizeCanvas = () => {
-        this.overlayCanvas.width = window.innerWidth;
-        this.overlayCanvas.height = window.innerHeight;
-        this.sceneCanvas.width = window.innerWidth;
-        this.sceneCanvas.height = window.innerHeight;
+    setScales(x, y, z) {
+        this.model.scale.x = x;
+        this.model.scale.y = y;
+        this.model.scale.z = z;
     }
 }

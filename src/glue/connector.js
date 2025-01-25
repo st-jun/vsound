@@ -14,14 +14,14 @@ export default class Connector {
                 this.handPoseAnalyzers[i].analyze(handPoses[i]);
             }
         }
-
-        //this.ui.drawOverlay(this.handPoseAnalyzers);
     }
 
 
     static assignToControlPoints(handPoses, controlPoints) {
         if (handPoses[0] === undefined) return [];
         else if (handPoses[1] === undefined) return handPoses;
+
+        if (handPoses[0] === undefined || handPoses[1] === undefined) return [undefined, undefined];
 
         if (handPoses[0][9].x < handPoses[1][9].x) {
             if (controlPoints[0][0] < controlPoints[1][0]) {
