@@ -37,16 +37,16 @@ const masteringStage = new MasteringStage();
 // Effects
 const effectChain = new EffectChain();
 effectChain.add(new AutoWahEffect(), 0);
-effectChain.add(new PhaserEffect(), 8);
+effectChain.add(new PhaserEffect(), 1);
 effectChain.add(new ChebyshevEffect(), 6);
-effectChain.add(new DistortionEffect(), 5);
-effectChain.add(new ChorusEffect(), 7);
-effectChain.add(new FrequencyShifterEffect(-5000), 1);
-effectChain.add(new FrequencyShifterEffect(5000), 3);
+effectChain.add(new DistortionEffect(), 2);
+effectChain.add(new FrequencyShifterEffect(-1000), 5);
+effectChain.add(new FrequencyShifterEffect(-5000), 8);
+effectChain.add(new FrequencyShifterEffect(5000), 7);
 //effectChain.add(new ChorusEffect(), 3);
 effectChain.add(new FeedbackDelayEffect(), 4);
 //effectChain.add(new TremoloEffect(), 1);
-effectChain.add(new VibratoEffect(), 2);
+effectChain.add(new VibratoEffect(), 3);
 //effectChain.add(new ReverbEffect(), 0);
 effectChain.connectOut(masteringStage.mainGain);
 
@@ -54,7 +54,7 @@ effectChain.connectOut(masteringStage.mainGain);
 const amSynth = new AMSynthesizer();
 const fmSynth = new FMSynthesizer();
 const duoSynth = new DuoSynthesizer();
-const synthCollection = new SynthCollection([amSynth, duoSynth], effectChain.lowpass);
+const synthCollection = new SynthCollection([duoSynth], effectChain.lowpass);
 
 // Controllers
 let controllers = [];

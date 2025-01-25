@@ -148,6 +148,20 @@ export default class SynthCollection extends SynthControllable{
         }
     };
 
+    setEnvelope(attack, decay, sustain, release) {
+        const envelope = {
+            attack: attack * 1,
+            decay: decay * 0.5,
+            sustain: sustain * 0.5 + 0.3,
+            release: release * 2 + 0.1,
+        };
+        //console.log(envelope);
+        for (let synth of this.synthesizers) {
+            synth.synth.set({envelope: envelope});
+            synth.arpeggioSynth.set({envelope: envelope});
+        }
+    }
+
     setInstrumentGain(index, gain) {
         this.synthesizers[index].setGain(gain);
     }

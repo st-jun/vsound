@@ -11,6 +11,10 @@ export class SynthControllable {
         return undefined;
     };
 
+    setEnvelope(attack, decay, sustain, release) {
+        return undefined;
+    }
+
     setInstrumentGain(index, gain) {
         return undefined;
     }
@@ -78,6 +82,22 @@ class Controller {
     }
 
     getInstrumentTone(nInstruments, i) {
+        return null;
+    }
+
+    getAttack() {
+        return null;
+    }
+
+    getDecay() {
+        return null;
+    }
+
+    getSustain() {
+        return null;
+    }
+
+    getRelease() {
         return null;
     }
 
@@ -167,6 +187,17 @@ class Controller {
             // frequency / detune
             result = this.getFrequency(SynthCollection.chordProgressions[0].length);
             if (result !== null) synthControllable.setFrequencyStep(result);
+
+            // envelope
+            const attack = this.getAttack();
+            if (attack !== null) {
+                const decay = this.getDecay();
+                const sustain = this.getSustain();
+                const release = this.getRelease();
+                if (decay !== null && sustain !== null && release !== null) {
+                    synthControllable.setEnvelope(attack, decay, sustain, release);
+                }
+            }
 
             // instrument gains
             for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
@@ -284,7 +315,6 @@ export class EffectController extends Controller {
             else if (i === 8) return clip(this.handPoseAnalyzer.handRefX / -this.rangeMax - this.rangeMin);
             else return 0;
         }
-
     }
 
     getEffectWetness(nEffects, i) {
@@ -314,4 +344,20 @@ export class EffectController extends Controller {
             return 0.;
         }
     }
+
+    // getAttack(nEffects, i) {
+    //     return clip(this.handPoseAnalyzer.handY);
+    // }
+    //
+    // getDecay(nEffects, i) {
+    //     return clip(this.handPoseAnalyzer.handY);
+    // }
+    //
+    // getSustain(nEffects, i) {
+    //     return clip(this.handPoseAnalyzer.handX);
+    // }
+    //
+    // getRelease(nEffects, i) {
+    //     return clip(this.handPoseAnalyzer.handX);
+    // }
 }

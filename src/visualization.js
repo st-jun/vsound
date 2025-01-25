@@ -155,7 +155,7 @@ class UIScene {
         const numBoxes = 12;
         this.nLinesPerEffect = 3;
         this.octaveRing = new BoxTorus(this.scene, numBoxes, [boxSize, boxSize, boxSize], torusRadius, rainbowColors, false);
-        this.effectLines = new BoxTorus(this.scene, effectChain.effects.length * this.nLinesPerEffect, [0.3, 0.3, 1000], 3, ["#000000"], true, [0, 0, -100]);
+        this.effectLines = new BoxTorus(this.scene, effectChain.effects.length * this.nLinesPerEffect, [0.15, 0.15, 1000], 3, ["#000000"], true, [0, 0, -100]);
         this.filterPoti = new Potentiometer(this.scene);
 
         this.sceneSynths = new UISceneSynths(this.camera, this.octaveRing, this.filterPoti, synthCollection);
@@ -171,7 +171,7 @@ class UIScene {
 
         requestAnimationFrame( this.drawScene );
 
-        if (now - this.lastUpdate > 15) {
+        if (now - this.lastUpdate > 0) {
             this.lastUpdate = now;
 
             for (let controller of this.controllers) {
