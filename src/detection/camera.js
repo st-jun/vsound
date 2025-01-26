@@ -24,7 +24,6 @@ export default class Webcam {
         navigator.mediaDevices.getUserMedia({ video: true, audio: false })
             .then((stream) => {
                 this.video.srcObject = stream;
-                //this.video.isRunning = true;
             })
             .catch((err) => {
                 console.error('Error accessing the webcam:', err);
@@ -39,14 +38,23 @@ export default class Webcam {
 
     togglePlay() {
         if (this.isRunning) {
-            this.isRunning = false;
-            this.video.pause();
+            this.stop();
         } else {
-            this.video.play();
-            this.isRunning = true;
-            for (let callback of this.callbackFuncs) {
-                this.video.requestVideoFrameCallback(callback);
-            }
+            this.start();
         }
+    }
+
+    start = () => {
+        console.log("Starting");
+        this.video.play();
+        this.isRunning = true;
+        for (let callback of this.callbackFuncs) {
+            this.video.requestVideoFrameCallback(callback);
+        }
+    }
+
+    stop = () => {
+        this.isRunning = false;
+        this.video.pause();
     }
 }

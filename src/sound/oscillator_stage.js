@@ -102,6 +102,14 @@ export default class SynthCollection extends SynthControllable{
         this.arpeggio.start();
     }
 
+    stop() {
+        for (let i = 0; i < this.currentIndices.length; i++) {
+            this.stopChord(this.currentNotes);
+        }
+        this.arpeggio.stop();
+        Tone.Transport.stop();
+    }
+
     setFrequencyStep(frequencyIndex) {
         frequencyIndex = Math.round(frequencyIndex);
 

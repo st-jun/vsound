@@ -69,7 +69,7 @@ class Controller {
         this.synthCollection = synthCollection;
         this.effectChain = effectChain;
         this.handPoseAnalyzer = handPoseAnalyzer;
-        this.handPoseAnalyzer.addPostAnalysisCallback(this.setParameters);
+        this.handPoseAnalyzer.setPostAnalysisCallback(this.setParameters);
 
         this.settingParameters = false;
 

@@ -23,11 +23,37 @@ export default class HandPoseAnalyzer {
         this.fingerExtension = new Array(5).fill(0.); // [0, 1]
         this.fingerIsExtended = new Array(5).fill(false); // [true, false]
 
-        this.analysisCallback = [];
+        this.analysisCallback = undefined;
     }
 
-    addPostAnalysisCallback(analysisCallback) {
-        this.analysisCallback.push(analysisCallback);
+    static assignToControlPoints(handPoses, controlPoints) {
+        // if (handPoses[0] === undefined) return [];
+        // else if (handPoses[1] === undefined) return handPoses;
+        if (handPoses[0] === undefined || handPoses[1] === undefined) {
+            return [undefined, undefined];
+        }
+
+        if (handPoses[0][9].x < handPoses[1][9].x) {
+            if (controlPoints[0][0] < controlPoints[1][0]) {
+                return [handPoses[0], handPoses[1]];
+            } else {
+                return [handPoses[1], handPoses[0]];
+            }
+        } else {
+            if (controlPoints[0][0] > controlPoints[1][0]) {
+                return [handPoses[0], handPoses[1]];
+            } else {
+                return [handPoses[1], handPoses[0]];
+            }
+        }
+    }
+
+    setPostAnalysisCallback(analysisCallback) {
+        this.analysisCallback = analysisCallback;
+    }
+
+    resetPostAnalysisCallback() {
+        this.analysisCallback = undefined;
     }
 
     analyze = (handPose) => {
@@ -64,9 +90,7 @@ export default class HandPoseAnalyzer {
                 this.fingerTipY[i] = handPose[i * 4 + 4].y;
             }
 
-            for (let callbackFunc of this.analysisCallback) {
-                callbackFunc();
-            }
+            if (this.analysisCallback !== undefined) this.analysisCallback();
 
             this.isAnalyzing = false;
         }

@@ -35,6 +35,10 @@ export default class HandPoseDetector {
         this.detectionCallback = callbackFunc;
     }
 
+    resetPostDetectionCallback() {
+        this.detectionCallback = undefined;
+    }
+
     detect = async () => {
         if (this.detector === undefined) {
             await this.createDetector();

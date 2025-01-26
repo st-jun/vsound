@@ -1,5 +1,3 @@
-
-
 export default class MasteringStage {
     constructor() {
         this.targetLoudness = -35; // dB

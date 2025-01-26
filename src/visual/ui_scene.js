@@ -71,14 +71,20 @@ export default class UIScene {
         this.sceneEffects = new UISceneEffects(this.camera, this.effectLines, this.filterPoti, this.nLinesPerEffect);
 
         this.lastUpdate = performance.now();
+
+        this.active = true;
+
         this.drawScene();
     }
 
+    stop() {
+        this.active = false;
+    }
 
     drawScene = () => {
         const now = performance.now();
 
-        requestAnimationFrame( this.drawScene );
+        if (this.active) requestAnimationFrame(this.drawScene);
 
         if (now - this.lastUpdate > 0) {
             this.lastUpdate = now;
@@ -89,7 +95,6 @@ export default class UIScene {
 
             this.composer.render();
         }
-
     }
 }
 
@@ -107,12 +112,15 @@ class UISceneSynths extends SynthControllable {
     setFrequencyStep(frequencyIndex) {
         for (let i = 0; i < Chords.octave.length; i++) {
             let found = false;
+
             for (let currentNote of this.synthCollection.currentNotes) {
-                if (currentNote !== null && currentNote.length - 1 === Chords.octave[i].length && currentNote.substring(0, currentNote.length - 1) === Chords.octave[i]) {
+                if (currentNote !== null && currentNote.length - 1 === Chords.octave[i].length &&
+                    currentNote.substring(0, currentNote.length - 1) === Chords.octave[i]) {
                     found = true;
                     this.octaveRing.setOpacity(i, 1);
                 }
             }
+
             if (!found) {
                 this.octaveRing.setOpacity(i, 0);
             }
@@ -161,6 +169,7 @@ class UISceneSynths extends SynthControllable {
     }
 }
 
+
 class UISceneEffects extends EffectControllable {
     constructor(camera, effectLines, filterPoti, nLinesPerEffect) {
         super();
@@ -193,7 +202,6 @@ class UISceneEffects extends EffectControllable {
             for (let i = 0; i < this.nLinesPerEffect; i++) {
                 this.effectLines.setScales(index * this.nLinesPerEffect + i, wetness * 2, wetness * 2, 1);
             }
-
         } else if (index < 5) {
             for (let i = 0; i < this.nLinesPerEffect; i++) {
                 this.effectLines.setScales(index * this.nLinesPerEffect + i, wetness * 2, wetness * 2, 1);
