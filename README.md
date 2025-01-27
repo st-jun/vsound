@@ -35,6 +35,13 @@ The controls are designed to be easily modifiable through the `Controller` class
 | Fingers         | Chord notes                            | Effect tones (1-4)           |
 | Thumb           | Chord Type (major, minor, power)       | Effect tone (0)              |
 
+```
+  y 
+  | z
+  |/
+  +--- x
+```
+
 ## Planned
 - [ ] Improve performance through webworkers
 - [ ] Provide resource friendly version
