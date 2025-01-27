@@ -4,7 +4,7 @@ A demo application that allows you to control a simple synthesizer setup by trac
 While there is no full orchestra at your disposal, you get a synthesizer and a full effect chain with filters that you can go wild with.
 
 
-![Whiplashhhh](https://media1.tenor.com/m/daLmQ9PQmDsAAAAC/whiplash-drums.gif)
+![ezgif-6bdf9fd986c96](https://github.com/user-attachments/assets/79c82ec4-6c96-46b8-bbd1-682db4b4d742)
 
 
 ## Prerequisites
