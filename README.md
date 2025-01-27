@@ -19,9 +19,9 @@ If you want to host it yourself, simply publish the files on a webserver, [third
 
 
 If for some reason you can not access the hosted version, you can watch an example video here:
-<video src="https://https://st-jun.github.io/vsound/public/example.mp4" controls  width="545" >
-  Your browser does not support the video tag.
-</video>
+
+https://github.com/user-attachments/assets/02afdb65-b9c1-4ecb-84fe-067e2f3e4469
+
 
 ## Controls
 The controls are designed to be easily modifiable through the `Controller` class. The current layout is as follows:
@@ -47,3 +47,8 @@ The controls are designed to be easily modifiable through the `Controller` class
 - [Tone.js](https://github.com/Tonejs/Tone.js) for the audio pipeline
 - [Three.js](https://github.com/mrdoob/three.js) for drawing the 3D scene
 - <a href="https://www.flaticon.com/free-icons/finger" title="finger icons">Finger icons created by Freepik - Flaticon</a>
+
+
+
+
+
