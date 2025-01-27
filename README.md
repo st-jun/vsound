@@ -1,10 +1,11 @@
 # VSound
 
-A demo application that allows you to control a simple synthesizer setup through the movement of your hands. Just like this guy!
+A demo application that allows you to control a simple synthesizer setup by tracking the movement of your hands through your webcam.
 While there is no full orchestra at your disposal, you get a synthesizer and a full effect chain with filters that you can go wild with.
 
 
-![Whiplashhhh](https://media1.tenor.com/m/vahYKqfPzkgAAAAC/notsure500-drums.gif)
+![Whiplashhhh](https://media1.tenor.com/m/daLmQ9PQmDsAAAAC/whiplash-drums.gif)
+
 
 ## Prerequisites
 - Webcam
@@ -53,6 +54,7 @@ The controls are designed to be easily modifiable through the `Controller` class
 - [MediaPipe](https://github.com/google-ai-edge/mediapipe) for hand pose detection
 - [Tone.js](https://github.com/Tonejs/Tone.js) for the audio pipeline
 - [Three.js](https://github.com/mrdoob/three.js) for drawing the 3D scene
+- [detect-gpu](https://github.com/pmndrs/detect-gpu) for assessing GPU capabilities
 - <a href="https://www.flaticon.com/free-icons/finger" title="finger icons">Finger icons created by Freepik - Flaticon</a>
 
 

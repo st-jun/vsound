@@ -15,6 +15,7 @@ import UI from "ui";
 import {AMSynthesizer, FMSynthesizer, DuoSynthesizer} from "synthesizer";
 import MasteringStage from "masteringStage";
 import {GreetingMenu, HandPlacementMenu} from "menu";
+import {getGPUTier} from 'detect-gpu';
 
 
 export default class App {
@@ -43,13 +44,18 @@ export default class App {
         const gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
         if (gl) {
             console.log("WebGL context successfully created.");
-            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-            const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-            const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-            console.log(debugInfo, vendor, renderer);
         } else {
             alert("WebGL could not be instantiated. Some features may not work as expected.");
         }
+
+        // check gpu
+        (async () => {
+            const gpuTier = await getGPUTier();
+            console.log(gpuTier);
+            if (gpuTier.tier < 3) {
+                alert("Your GPU is classified below tier 3 by detect-gpu. Some features may not work as expected.");
+            }
+        })();
     }
 
     initDetection() {
