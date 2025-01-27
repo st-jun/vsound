@@ -26,12 +26,33 @@ export default class App {
 
     run = async () => {
         // this is modeled in a "synchronous" way on purpose to make the flow more explicit
-        this.startDetection();
+        this.checkCompatibility();
+        this.initDetection();
         await this.startMenu();
         this.startMain();
     }
 
-    startDetection() {
+    checkCompatibility() {
+        // check browser
+        if (/firefox/i.test(navigator.userAgent)) {
+            alert("You are using Firefox. Some features may not work as expected. It is recommended to use a Chromium-like browser.");
+        }
+
+        // check webgl
+        const canvas = document.createElement("canvas");
+        const gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
+        if (gl) {
+            console.log("WebGL context successfully created.");
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+            const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+            console.log(debugInfo, vendor, renderer);
+        } else {
+            alert("WebGL could not be instantiated. Some features may not work as expected.");
+        }
+    }
+
+    initDetection() {
         // Camera
         this.webcam = new Webcam();
 
