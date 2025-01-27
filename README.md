@@ -6,8 +6,22 @@ While there is no full orchestra at your disposal, you get a synthesizer and a f
 
 ![Whiplashhhh](https://media1.tenor.com/m/vahYKqfPzkgAAAAC/notsure500-drums.gif)
 
+## Prerequisites
+- Webcam
+- Speakers/Headphones
+- A somewhat decent graphics card (GTX 1080 Ti +)
+- A Chromium-like browser is recommended
+
 ## Run
-Simply host the files on a webserver, [third party resources](#third-party-resources) are loaded automatically.
+There is a hosted version at https://st-jun.github.io/vsound/.
+
+If you want to host it yourself, simply publish the files on a webserver, [third party resources](#third-party-resources) are loaded automatically.
+
+
+If for some reason you can not access the hosted version, you can watch an example video here:
+<video src="https://https://st-jun.github.io/vsound/public/example.mp4" controls  width="545" >
+  Your browser does not support the video tag.
+</video>
 
 ## Controls
 The controls are designed to be easily modifiable through the `Controller` class. The current layout is as follows:

@@ -33,6 +33,21 @@ function createImage(src, centerX, centerY, width, height) {
 }
 
 
+function createVideo(src, centerX, centerY, width, height) {
+    const video = document.createElement('video');
+
+    video.src = src;
+    video.style.position = 'absolute';
+    video.style.left = `${centerX * 100}vw`;
+    video.style.top = `${centerY * 100}vh`;
+    video.style.width = `${width * 100}vh`;
+    video.style.height = `${height * 100}vh`;
+    video.style.transform = 'translate(-50%, -50%)';
+
+    return video;
+}
+
+
 export class GreetingMenu {
     constructor(ui, overlay) {
         this.ui = ui;
@@ -48,6 +63,14 @@ export class GreetingMenu {
 
     setContent() {
         const container = createContainer();
+
+        const video = createVideo('public/example.mp4', 0.5, 0.4, 0.7, 0.5);
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playbackRate = 5;
+        container.appendChild(video);
+
         const textField = createTextfield(
             'This is a demo application that allows you to control a simple synthesizer setup through the movement of your hands.<br><br>' +
             'In order to track your hands, please allow the browser to access your camera. In order to hear the sound, make sure your speakers are active.<br><br>' +

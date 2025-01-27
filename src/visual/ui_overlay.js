@@ -50,7 +50,7 @@ export default class UIOverlay {
             requestAnimationFrame(this.drawHandPlacementOverlay);
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.drawBorderWarnings()
-            this.drawHandOverlay();
+            this.drawHandOverlay("white", false);
         }
     }
 
@@ -104,7 +104,7 @@ export default class UIOverlay {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    drawHandOverlay() {
+    drawHandOverlay(color = "red", includeFingers = true) {
         for (let handPoseAnalyzer of this.handPoseAnalyzers) {
             // palm
             this.drawCircle(
@@ -112,17 +112,19 @@ export default class UIOverlay {
                 this.getX(handPoseAnalyzer.handX),
                 this.getY(handPoseAnalyzer.handY),
                 this.getX(handPoseAnalyzer.handLength / 10.),
-                "red");
+                color);
 
             // fingers
-            for (let i = 0; i < handPoseAnalyzer.fingerTipX.length; i++) {
-                if (handPoseAnalyzer.fingerIsExtended[i] || i === 0) {
-                    this.drawCircle(
-                        this.ctx,
-                        this.getX((1. - handPoseAnalyzer.fingerTipX[i])),
-                        this.getY(handPoseAnalyzer.fingerTipY[i]),
-                        this.getX(handPoseAnalyzer.fingerExtension[i] / 100.),
-                        "red");
+            if (includeFingers) {
+                for (let i = 0; i < handPoseAnalyzer.fingerTipX.length; i++) {
+                    if (handPoseAnalyzer.fingerIsExtended[i] || i === 0) {
+                        this.drawCircle(
+                            this.ctx,
+                            this.getX((1. - handPoseAnalyzer.fingerTipX[i])),
+                            this.getY(handPoseAnalyzer.fingerTipY[i]),
+                            this.getX(handPoseAnalyzer.fingerExtension[i] / 100.),
+                            color);
+                    }
                 }
             }
         }
