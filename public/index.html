@@ -4,11 +4,15 @@
 		<meta charset="utf-8" />
 		<title>VSound</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<link rel="stylesheet" href="./style.css">
+
 		<script type="importmap">
 			{
 			"imports": {
 				"three": "https://cdn.jsdelivr.net/npm/three@0.172.0/build/three.module.js",
 				"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.172.0/examples/jsm/",
+				"mediapipe/tasksVision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0",
 				"camera": "../src/detection/camera.js",
                 "app": "../src/glue/app.js",
                 "controlElements": "../src/visual/control_elements.js",
@@ -23,23 +27,17 @@
                 "synthesizer": "../src/sound/synthesizer.js",
                 "util": "../src/glue/util.js",
                 "ui": "../src/visual/ui.js",
-                "ui_scene": "../src/visual/ui_scene.js",
-                "ui_overlay": "../src/visual/ui_overlay.js"
+                "uiScene": "../src/visual/ui_scene.js",
+                "uiOverlay": "../src/visual/ui_overlay.js"
               }
             }
 		</script>
 
 		<!-- Tone.js -->
 		<script src="https://unpkg.com/tone"></script>
-
-		<!-- Mediapipe -->
-		<script src="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/vision_bundle.js" type="module" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
 	</head>
 
 	<body></body>
-
 
 	<!-- Entry module -->
 	<script src="../src/glue/init.js" type="module"></script>

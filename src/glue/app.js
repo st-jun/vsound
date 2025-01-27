@@ -18,7 +18,7 @@ import {GreetingMenu, HandPlacementMenu} from "menu";
 
 
 export default class App {
-    constructor(controlPoints = [[0.65, 0.5], [0.35, 0.5]]) {
+    constructor(controlPoints = [[0.35, 0.5], [0.65, 0.5]]) {
         // The control points indicate the references for left and right hand.
         // Hand positions w.r.t. them influence some aspects of the instruments and effects.
         this.controlPoints = controlPoints;

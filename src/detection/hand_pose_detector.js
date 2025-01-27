@@ -1,9 +1,7 @@
-// https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/web_js#video
-
 import {
     HandLandmarker,
     FilesetResolver
-} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+} from "mediapipe/tasksVision";
 
 
 export default class HandPoseDetector {

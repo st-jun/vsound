@@ -3,11 +3,7 @@ import {waitForCondition} from "util";
 function createContainer() {
     const container = document.createElement('div');
 
-    container.style.position = 'relative';
-    container.style.width = '100vw';
-    container.style.height = '100vh';
-    container.style.backgroundColor = '#000000';
-    container.style.overflow = 'hidden';
+    container.classList.add("full-container");
 
     return container;
 }
@@ -15,23 +11,7 @@ function createContainer() {
 function createTextfield(text) {
     const textField = document.createElement('div');
 
-    textField.style.position = 'absolute';
-    textField.style.width = 'auto';
-    textField.style.maxWidth = '90%';
-    textField.style.height = 'auto';
-    textField.style.maxHeight = '30vh';
-    textField.style.top = '70vh';
-    textField.style.left = '50%';
-    textField.style.transform = 'translateX(-50%)';
-    textField.style.textAlign = 'left';
-    textField.style.fontSize = '2vh';
-    textField.style.padding = '20px';
-    textField.style.border = '5px solid #ffffff';
-    textField.style.borderRadius = '5px';
-    textField.style.color = '#ffffff';
-    textField.style.backgroundColor = '#000000';
-    textField.style.fontFamily = "Courier New";
-    textField.style.whiteSpace = 'wrap';
+    textField.classList.add("menu-text");
     textField.innerHTML = text;
 
     return textField;

@@ -12,19 +12,12 @@ export default class UIOverlay {
 
     initCanvas() {
         this.canvas = document.createElement('canvas');
-        this.canvas.style.position = 'fixed';
-        this.canvas.style.top = '0';
-        this.canvas.style.left = '0';
+        this.canvas.classList.add("full-canvas");
     }
 
     initMenuDiv() {
         this.menuDiv = document.createElement('div');
-        this.menuDiv.style.position = 'fixed';
-        this.menuDiv.style.top = '0';
-        this.menuDiv.style.left = '0';
-        this.menuDiv.style.width = '100%';
-        this.menuDiv.style.height = '100%';
-        this.menuDiv.style.backgroundColor = 'black';
+        this.menuDiv.classList.add('menu');
     }
 
     getX(normalizedX) {
@@ -90,13 +83,13 @@ export default class UIOverlay {
         // only draw one indicator per hand at most
         for (let handPoseAnalyzer of this.handPoseAnalyzers) {
             if (handPoseAnalyzer.handX < this.border) {
-                this.drawBorderWarning(this.getX(1), this.getY(handPoseAnalyzer.handY), 1 - handPoseAnalyzer.handX * 5)
+                this.drawBorderWarning(this.getX(0), this.getY(handPoseAnalyzer.handY), (this.border - handPoseAnalyzer.handX) * 5)
             } else if (handPoseAnalyzer.handX > 1 - this.border) {
-                this.drawBorderWarning(this.getX(0), this.getY(handPoseAnalyzer.handY), 1 - (1 - handPoseAnalyzer.handX) * 5)
+                this.drawBorderWarning(this.getX(1), this.getY(handPoseAnalyzer.handY), (this.border - (1 - handPoseAnalyzer.handX)) * 5)
             } else if (handPoseAnalyzer.handY < this.border) {
-                this.drawBorderWarning(this.getX(1 - handPoseAnalyzer.handX), this.getY(0), 1 - handPoseAnalyzer.handY * 5)
+                this.drawBorderWarning(this.getX(handPoseAnalyzer.handX), this.getY(0), 1 - handPoseAnalyzer.handY * 5)
             } else if (handPoseAnalyzer.handY > 1 - this.border) {
-                this.drawBorderWarning(this.getX(1 - handPoseAnalyzer.handX), this.getY(1), 1 - (1 - handPoseAnalyzer.handY) * 5)
+                this.drawBorderWarning(this.getX(handPoseAnalyzer.handX), this.getY(1), 1 - (1 - handPoseAnalyzer.handY) * 5)
             }
         }
     }
@@ -116,7 +109,7 @@ export default class UIOverlay {
             // palm
             this.drawCircle(
                 this.ctx,
-                this.getX((1. - handPoseAnalyzer.handX)),
+                this.getX(handPoseAnalyzer.handX),
                 this.getY(handPoseAnalyzer.handY),
                 this.getX(handPoseAnalyzer.handLength / 10.),
                 "red");

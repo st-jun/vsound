@@ -344,20 +344,4 @@ export class EffectController extends Controller {
             return 0.;
         }
     }
-
-    // getAttack(nEffects, i) {
-    //     return clip(this.handPoseAnalyzer.handY);
-    // }
-    //
-    // getDecay(nEffects, i) {
-    //     return clip(this.handPoseAnalyzer.handY);
-    // }
-    //
-    // getSustain(nEffects, i) {
-    //     return clip(this.handPoseAnalyzer.handX);
-    // }
-    //
-    // getRelease(nEffects, i) {
-    //     return clip(this.handPoseAnalyzer.handX);
-    // }
 }

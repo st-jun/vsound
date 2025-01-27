@@ -1,4 +1,3 @@
-
 export default class Webcam {
     constructor() {
         this.isRunning = false;
@@ -12,12 +11,8 @@ export default class Webcam {
     initVideo() {
         this.video = document.createElement('video');
         this.video.id = "webcam";
-        this.video.style.width = '100%';
-        this.video.style.height = '100%';
-        this.video.style.objectFit = 'contain';
         this.video.controls = false;
         this.video.autoplay = false;
-        this.video.style.opacity = "0.0";
     }
 
     initWebcam() {

@@ -1,5 +1,5 @@
-import UIScene from "ui_scene";
-import UIOverlay from "ui_overlay";
+import UIScene from "uiScene";
+import UIOverlay from "uiOverlay";
 
 
 export default class UI {
@@ -37,18 +37,12 @@ export default class UI {
 
     initContainer() {
         this.container = document.createElement('div');
-        this.container.style.position = 'fixed';
-        this.container.style.maxWidth = '100%';
-        this.container.style.maxHeight = '100%';
-        this.container.style.top = '0';
-        this.container.style.left = '0';
+        this.container.classList.add('full-container');
     }
 
     initSceneCanvas() {
         this.sceneCanvas = document.createElement('canvas');
-        this.sceneCanvas.style.position = 'fixed';
-        this.sceneCanvas.style.top = '0';
-        this.sceneCanvas.style.left = '0';
+        this.sceneCanvas.classList.add('full-canvas');
     }
 
     resize = () => {

@@ -33,7 +33,8 @@ export default class HandPoseAnalyzer {
             return [undefined, undefined];
         }
 
-        if (handPoses[0][9].x < handPoses[1][9].x) {
+        // video is mirrored, thus we have to check for the inverted condition here (left x is bigger than right x, instead of smaller)
+        if (handPoses[0][9].x > handPoses[1][9].x) {
             if (controlPoints[0][0] < controlPoints[1][0]) {
                 return [handPoses[0], handPoses[1]];
             } else {
@@ -60,12 +61,12 @@ export default class HandPoseAnalyzer {
         if (!this.isAnalyzing) {
             this.isAnalyzing = true;
 
-            this.handX = clip((handPose[5].x + handPose[17].x + handPose[0].x) / 3.);
+            this.handX = 1 - clip((handPose[5].x + handPose[17].x + handPose[0].x) / 3.);  // video is mirrored
             this.handY = clip((handPose[5].y + handPose[17].y + handPose[0].y) / 3.);
             this.handAngle = clip(angleDeg(handPose[13].x - handPose[0].x, handPose[13].y - handPose[0].y, 1., 0), 0, 360);
 
-            this.handRefX = clip((handPose[0].x + handPose[5].x + handPose[9].x + handPose[13].x + handPose[17].x) / 5. - this.referenceX, -0.5, 0.5);
-            this.handRefY = clip((handPose[0].y + handPose[5].y + handPose[9].y + handPose[13].y + handPose[17].y) / 5. - this.referenceY, -0.5, 0.5);
+            this.handRefX = clip(this.handX - this.referenceX, -0.5, 0.5);
+            this.handRefY = clip(this.handY - this.referenceY, -0.5, 0.5);
             this.handRefAngle = clip(angleDeg(this.handX - this.referenceX, this.handY - this.referenceY, 1., 0), 0, 360);
 
             this.handLength = clip((norm(handPose[5].x - handPose[0].x, handPose[5].y - handPose[0].y) - 0.1) / 0.25);
