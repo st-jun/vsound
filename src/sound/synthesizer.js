@@ -95,7 +95,9 @@ export class DuoSynthesizer extends Synthesizer {
 
     setTone(newTone) {
         for (let cs of this.chordSynths) {
-            cs.set({harmonicity: 2 * newTone, vibratoRate: newTone * 10, vibratoAmount: newTone});
+            cs.harmonicity.value = 2 * newTone;
+            cs.vibratoRate.value = 10 * newTone;
+            cs.vibratoAmount.value = newTone;
         }
         this.arpeggioSynth.set({harmonicity: 2 * newTone, vibratoRate: newTone * 10, vibratoAmount: newTone});
     }

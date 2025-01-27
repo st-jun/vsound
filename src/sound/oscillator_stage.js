@@ -95,16 +95,23 @@ export default class SynthCollection extends SynthControllable{
     static chordProgressions = [Chords.majorProgression, Chords.minorProgression, Chords.powerProgression];
     static chordProgressionsCents = [Chords.majorProgressionCents, Chords.minorProgressionCents, Chords.powerProgressionCents];
 
-    constructor(synthesizers, outRoute) {
+    constructor(synthesizers, outRoute, chordActive) {
         super();
-        this.chordGain = new Tone.Gain(0.);
+        this.chordActive = chordActive;
+
         this.arpeggioGain = new Tone.Gain(0.);
-        this.chordGain.connect(outRoute);
         this.arpeggioGain.connect(outRoute);
+
+        if (this.chordActive) {
+            this.chordGain = new Tone.Gain(0.);
+            this.chordGain.connect(outRoute);
+        } else {
+            this.arpeggioGain.gain.value = 1;
+        }
 
         this.synthesizers = synthesizers;
         for (let synth of this.synthesizers) {
-            synth.connect(this.chordGain);
+            if (this.chordActive) synth.connect(this.chordGain);
             synth.connectArpeggio(this.arpeggioGain);
         }
 
@@ -138,11 +145,15 @@ export default class SynthCollection extends SynthControllable{
         this.arpeggio.start();
 
         // start chord
-        for (let synth of this.synthesizers) {
-            for (let cs of synth.chordSynths)
-            cs.triggerAttack("C4");
+        if (this.chordActive) {
+            for (let synth of this.synthesizers) {
+                for (let cs of synth.chordSynths) {
+                    cs.triggerAttack("C4");
+                    cs.volume.value = 0;
+                }
+            }
+            this.updateChord();
         }
-        this.updateChord();
     }
 
     stop() {
@@ -191,7 +202,11 @@ export default class SynthCollection extends SynthControllable{
         };
         //console.log(envelope);
         for (let synth of this.synthesizers) {
-            synth.synth.set({envelope: envelope});
+            if (this.chordActive) {
+                for (let cs of synth.chordSynths) {
+                    cs.set({envelope: envelope});
+                }
+            }
             synth.arpeggioSynth.set({envelope: envelope});
         }
     }
@@ -212,8 +227,10 @@ export default class SynthCollection extends SynthControllable{
             this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
 
             this.updateArpeggioChord();
-            for (let synth of this.synthesizers) {
-                synth.chordSynths[index].volume.value = 1;
+            if (this.chordActive) {
+                for (let synth of this.synthesizers) {
+                    synth.chordSynths[index].volume.value = 0;
+                }
             }
         }
     }
@@ -224,8 +241,10 @@ export default class SynthCollection extends SynthControllable{
             this.currentNotes = this.currentIndices.map(index => this.currentChord[index]);
 
             this.updateArpeggioChord();
-            for (let synth of this.synthesizers) {
-                synth.chordSynths[index].volume.value = 0;
+            if (this.chordActive) {
+                for (let synth of this.synthesizers) {
+                    synth.chordSynths[index].volume.value = 0;
+                }
             }
         } else {
         }
@@ -240,12 +259,14 @@ export default class SynthCollection extends SynthControllable{
     }
 
     setArpeggioContribution(arpeggioContribution) {
-        if (this.currentNotes.length === 0) {
-            this.arpeggioGain.gain.value = 0.;
-            this.chordGain.gain.value = 0.;
-        } else {
-            this.arpeggioGain.gain.value = arpeggioContribution;
-            this.chordGain.gain.value = (1. - arpeggioContribution) / 4.;
+        if (this.chordActive) {
+            if (this.currentNotes.length === 0) {
+                this.arpeggioGain.gain.value = 0.;
+                this.chordGain.gain.value = 0.;
+            } else {
+                this.arpeggioGain.gain.value = arpeggioContribution;
+                this.chordGain.gain.value = (1. - arpeggioContribution) / 4.;
+            }
         }
     }
 

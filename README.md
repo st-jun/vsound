@@ -44,7 +44,7 @@ The controls are designed to be easily modifiable through the `Controller` class
 ```
 
 ## Planned
-- [ ] Improve performance through webworkers
+- [x] Improve performance
 - [ ] Provide resource friendly version
 - [ ] Softer synth + effect set
 - [ ] Real patterns instead of chords/arpeggios

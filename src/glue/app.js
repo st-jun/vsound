@@ -109,7 +109,7 @@ export default class App {
 
         // Synthesizers
         const duoSynth = new DuoSynthesizer();
-        this.synthCollection = new SynthCollection([duoSynth], this.effectChain.lowpass);
+        this.synthCollection = new SynthCollection([duoSynth], this.effectChain.lowpass, true);
 
         // Controllers
         this.controllers = [];
