@@ -2,11 +2,14 @@
 
 class Synthesizer {
     constructor(cls, baseGain) {
-        this.synth = new Tone.PolySynth(cls, this.getDefaultParameters());
-        this.synth.maxPolyphony = 80;
         this.baseGain = baseGain;
         this.gain = new Tone.Gain(0.1);
-        this.synth.connect(this.gain);
+
+        this.chordSynths = [];
+        for (let i = 0; i < 4; i++) {
+            this.chordSynths.push(new cls(this.getDefaultParameters()));
+            this.chordSynths[this.chordSynths.length - 1].connect(this.gain);
+        }
 
         this.arpeggioSynth = new cls(this.getDefaultParameters());
         this.arpeggioGain = new Tone.Gain(0.1);
@@ -91,7 +94,9 @@ export class DuoSynthesizer extends Synthesizer {
     }
 
     setTone(newTone) {
-        this.synth.set({harmonicity: 2 * newTone, vibratoRate: newTone * 10, vibratoAmount: newTone});
+        for (let cs of this.chordSynths) {
+            cs.set({harmonicity: 2 * newTone, vibratoRate: newTone * 10, vibratoAmount: newTone});
+        }
         this.arpeggioSynth.set({harmonicity: 2 * newTone, vibratoRate: newTone * 10, vibratoAmount: newTone});
     }
 }

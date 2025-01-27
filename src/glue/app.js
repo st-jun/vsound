@@ -36,7 +36,7 @@ export default class App {
     checkCompatibility() {
         // check browser
         if (/firefox/i.test(navigator.userAgent)) {
-            alert("You are using Firefox. Some features may not work as expected. It is recommended to use a Chromium-like browser.");
+            alert("A Chromium-like browser is recommended. Performance may be subpar.");
         }
 
         // check webgl
