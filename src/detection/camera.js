@@ -3,7 +3,6 @@ export default class Webcam {
         this.isRunning = false;
 
         this.initVideo();
-        this.initWebcam();
 
         this.callbackFuncs = [];
     }
@@ -40,7 +39,7 @@ export default class Webcam {
     }
 
     start = () => {
-        console.log("Starting");
+        this.initWebcam();
         this.video.play();
         this.isRunning = true;
         for (let callback of this.callbackFuncs) {

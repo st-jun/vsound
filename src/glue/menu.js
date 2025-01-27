@@ -81,8 +81,8 @@ export class HandPlacementMenu {
 
     setContent() {
         const container = createContainer();
-        const imgLeft = createImage('assets/left_hand.png', 0.35, 0.5, 0.3, 0.3);
-        const imgRight = createImage('assets/right_hand.png', 0.65, 0.5, 0.3, 0.3);
+        const imgLeft = createImage('public/left_hand.png', 0.35, 0.5, 0.3, 0.3);
+        const imgRight = createImage('public/right_hand.png', 0.65, 0.5, 0.3, 0.3);
         const textField = createTextfield(
             'Place your hands according to the indicators to start.<br><br>' +
             'Afterwards, carefully try to move your hands and fingers to find out how it affects the sound.<br><br>' +

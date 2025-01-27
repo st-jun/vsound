@@ -2,12 +2,7 @@
 
 class Synthesizer {
     constructor(cls, baseGain) {
-        // try {
-            this.synth = new Tone.PolySynth(cls, this.getDefaultParameters());
-        // } catch (e) {
-        //     this.synth = new cls(this.getSynthParameters());
-        // }
-
+        this.synth = new Tone.PolySynth(cls, this.getDefaultParameters());
         this.synth.maxPolyphony = 80;
         this.baseGain = baseGain;
         this.gain = new Tone.Gain(0.1);
