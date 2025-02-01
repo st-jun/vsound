@@ -1,8 +1,8 @@
-import * as THREE from 'three';
-import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
-import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
-import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
-import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import * as THREE from "three";
+import {EffectComposer} from "three/addons/postprocessing/EffectComposer.js";
+import {RenderPass} from "three/addons/postprocessing/RenderPass.js";
+import {UnrealBloomPass} from "three/addons/postprocessing/UnrealBloomPass.js";
+import {OutputPass} from "three/addons/postprocessing/OutputPass.js";
 import {EffectControllable, SynthControllable} from "controller";
 import SynthCollection, {Chords} from "oscillatorStage";
 
@@ -193,8 +193,8 @@ class UISceneEffects extends EffectControllable {
 
     setEffectWetness(index, wetness) {
         if (index >= 5 && wetness > 0) {
-            if      (index === 5) this.camera.position.y = -wetness * this.cameraRange;
-            else if (index === 6) this.camera.position.y = wetness * this.cameraRange;
+            if      (index === 5) this.camera.position.y = wetness * this.cameraRange;
+            else if (index === 6) this.camera.position.y = -wetness * this.cameraRange;
             else if (index === 7) this.camera.position.x = -wetness * this.cameraRange;
             else if (index === 8) this.camera.position.x = wetness * this.cameraRange;
             this.camera.lookAt(0, 0, 0);

@@ -10,15 +10,15 @@ export default class EffectChain extends EffectControllable{
         this.lowpass = new Tone.Filter({
             type: "lowpass",
             frequency: 1000,
-            rolloff: -48,
-            Q: 1
+            rolloff: -12,
+            Q: 5
         });
 
         this.highpass = new Tone.Filter({
             type: "highpass",
             frequency: 500,
-            rolloff: -48,
-            Q: 1
+            rolloff: -12,
+            Q: 5
         });
 
         this.lowpass.connect(this.highpass);

@@ -1,19 +1,25 @@
+/**
+ * @deprecated
+ * These are sliders and checkboxes that were used to test the tone.js functionality at the beginning of the project.
+ * They are not used for anything anymore, possibly not compatible with the rest of the code and will be removed later.
+ */
+
 
 const controlElementsActivated = false;
 
 
 export function createGainSlider(description, newGain) {
-  const newSlider = document.createElement('input');
-  newSlider.type = 'range';
-  newSlider.min = '0.';
-  newSlider.max = '100';
+  const newSlider = document.createElement("input");
+  newSlider.type = "range";
+  newSlider.min = "0.";
+  newSlider.max = "100";
   newSlider.value = newGain.gain.value * 100;
-  newSlider.step = '0.1';
+  newSlider.step = "0.1";
 
-  const newDisplay = document.createElement('p');
+  const newDisplay = document.createElement("p");
   newDisplay.textContent = `${description}: ${newGain.gain.value}`;
 
-  newSlider.addEventListener('input', () => {
+  newSlider.addEventListener("input", () => {
     newGain.gain.value = Number(newSlider.value)  / 100.;
     newDisplay.textContent = `${description}: ${newGain.gain.value}`;
   });
@@ -26,18 +32,18 @@ export function createGainSlider(description, newGain) {
 export function createFrequencySlider(synthesizers, min, max, step) {
   let description = "Frequency";
 
-  const newSlider = document.createElement('input');
-  newSlider.type = 'range';
+  const newSlider = document.createElement("input");
+  newSlider.type = "range";
   newSlider.min = `${min}`;
   newSlider.max = `${max}`;
   newSlider.value = synthesizers[0].get().detune;
   newSlider.step = `${step}`;
 
-  const newDisplay = document.createElement('p');
+  const newDisplay = document.createElement("p");
   newDisplay.textContent = `${description}: ${synthesizers[0].get().detune}`;
 
   for (let synth of synthesizers) {
-    newSlider.addEventListener('input', () => {
+    newSlider.addEventListener("input", () => {
       synth.set({detune: Number(newSlider.value)});
       newDisplay.textContent = `${description}: ${synthesizers[0].get().detune}`;
     });
@@ -50,13 +56,13 @@ export function createFrequencySlider(synthesizers, min, max, step) {
 
 export function createNoteCheckboxGroup(synthCollection) {
   for (let i = 0; i < 4; i++) {
-    const newCheckbox = document.createElement('input');
-    newCheckbox.type = 'checkbox';
+    const newCheckbox = document.createElement("input");
+    newCheckbox.type = "checkbox";
 
-    const newDisplay = document.createElement('p');
+    const newDisplay = document.createElement("p");
     newDisplay.textContent = `Note ${i}`;
 
-    newCheckbox.addEventListener('change', () => {
+    newCheckbox.addEventListener("change", () => {
       if (newCheckbox.checked) {
         synthCollection.addChordNote(i);
       } else {
@@ -73,17 +79,17 @@ export function createNoteCheckboxGroup(synthCollection) {
 export function createChordSlider(synthCollection) {
   let description = "Chord";
 
-  const newSlider = document.createElement('input');
-  newSlider.type = 'range';
-  newSlider.min = '0';
-  newSlider.max = '2';
-  newSlider.step = '1';
+  const newSlider = document.createElement("input");
+  newSlider.type = "range";
+  newSlider.min = "0";
+  newSlider.max = "2";
+  newSlider.step = "1";
   newSlider.value = synthCollection.chordIndex;
 
-  const newDisplay = document.createElement('p');
+  const newDisplay = document.createElement("p");
   newDisplay.textContent = `${description}: ${synthCollection.chordIndex}`;
 
-  newSlider.addEventListener('input', () => {
+  newSlider.addEventListener("input", () => {
     synthCollection.setChord(newSlider.value);
     newDisplay.textContent = `${description}: ${synthCollection.chordIndex}`;
   });
@@ -96,17 +102,17 @@ export function createChordSlider(synthCollection) {
 export function createEffectSlider(description, effectChain, effectIndex) {
   // control tone using a number between 0 and 1
   // specifics are done in the effectChain
-  const toneSlider = document.createElement('input');
-  toneSlider.type = 'range';
-  toneSlider.min = '0.';
-  toneSlider.max = '100';
+  const toneSlider = document.createElement("input");
+  toneSlider.type = "range";
+  toneSlider.min = "0.";
+  toneSlider.max = "100";
   toneSlider.value = effectChain.effectGetter[effectIndex]() * 100;
-  toneSlider.step = '0.1';
+  toneSlider.step = "0.1";
 
-  const toneDisplay = document.createElement('p');
+  const toneDisplay = document.createElement("p");
   toneDisplay.textContent = `${description} tone: ${effectChain.effectGetter[effectIndex]()}`;
 
-  toneSlider.addEventListener('input', () => {
+  toneSlider.addEventListener("input", () => {
     effectChain.effectSetter[effectIndex](Number(toneSlider.value)  / 100.);
     toneDisplay.textContent = `${description} tone: ${effectChain.effectGetter[effectIndex]()}`;
   });
@@ -115,17 +121,17 @@ export function createEffectSlider(description, effectChain, effectIndex) {
   if (controlElementsActivated) document.body.appendChild(toneSlider);
 
   // control the contribution to the output signal
-  const wetSlider = document.createElement('input');
-  wetSlider.type = 'range';
-  wetSlider.min = '0.';
-  wetSlider.max = '100';
+  const wetSlider = document.createElement("input");
+  wetSlider.type = "range";
+  wetSlider.min = "0.";
+  wetSlider.max = "100";
   wetSlider.value = effectChain.effects[effectIndex].wet.value * 100;
-  wetSlider.step = '0.1';
+  wetSlider.step = "0.1";
 
-  const wetDisplay = document.createElement('p');
+  const wetDisplay = document.createElement("p");
   wetDisplay.textContent = `${description} wet: ${effectChain.effects[effectIndex].wet.value}`;
 
-  wetSlider.addEventListener('input', () => {
+  wetSlider.addEventListener("input", () => {
     effectChain.effects[effectIndex].wet.value = Number(wetSlider.value)  / 100.;
     wetDisplay.textContent = `${description} wet: ${effectChain.effects[effectIndex].wet.value}`;
   });

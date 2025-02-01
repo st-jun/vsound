@@ -1,6 +1,23 @@
 import {angleDeg, norm, clip} from "util";
 
 
+/**
+ * Extract numerical values from mediapipe handpose detection. ( {@link HandPoseDetector})
+ *
+ * {property} handX - [0, 1]
+ * {property} handY - [0, 1]
+ * {property} handRefX - [-0.5, 0.5]
+ * {property} handRefY - [-0.5, 0.5]
+ * {property} handLength - [0, 1]
+ * {property} handAngle - [0, 360]
+ * {property} thumbAngle - [0, 45]
+ * {property} fingerTipX - [0, 1]
+ * {property} fingerTipY - [0, 1]
+ * {property} fingerExtension - [0, 1]
+ * {property} fingerIsExtended - [true, false]
+ *
+ * @class
+ */
 export default class HandPoseAnalyzer {
     constructor(controlPoint) {
         this.isAnalyzing = false;
@@ -26,6 +43,12 @@ export default class HandPoseAnalyzer {
         this.analysisCallback = undefined;
     }
 
+    /**
+     * Assign left handpose to the left controlpoint and right handpose to the right controlpoint.
+     * @param {HandPose} handPoses
+     * @param {number[][]} controlPoints
+     * @returns {*[]}
+     */
     static assignToControlPoints(handPoses, controlPoints) {
         // if (handPoses[0] === undefined) return [];
         // else if (handPoses[1] === undefined) return handPoses;
@@ -49,14 +72,25 @@ export default class HandPoseAnalyzer {
         }
     }
 
+    /**
+     * Set a function that is called after a hand pose has been analyzed.
+     * @param {Function} analysisCallback
+     */
     setPostAnalysisCallback(analysisCallback) {
         this.analysisCallback = analysisCallback;
     }
 
+    /**
+     * Remove the function that is called after analysis.
+     */
     resetPostAnalysisCallback() {
         this.analysisCallback = undefined;
     }
 
+    /**
+     * Extract numerical values from mediapipe handpose detections for left and right hand.
+     * @param handPose
+     */
     analyze = (handPose) => {
         if (!this.isAnalyzing) {
             this.isAnalyzing = true;

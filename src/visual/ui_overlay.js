@@ -7,17 +7,17 @@ export default class UIOverlay {
 
         this.initMenuDiv();
         this.initCanvas();
-        this.ctx = this.canvas.getContext('2d');
+        this.ctx = this.canvas.getContext("2d");
     }
 
     initCanvas() {
-        this.canvas = document.createElement('canvas');
+        this.canvas = document.createElement("canvas");
         this.canvas.classList.add("full-canvas");
     }
 
     initMenuDiv() {
-        this.menuDiv = document.createElement('div');
-        this.menuDiv.classList.add('menu');
+        this.menuDiv = document.createElement("div");
+        this.menuDiv.classList.add("menu");
     }
 
     getX(normalizedX) {
@@ -36,12 +36,12 @@ export default class UIOverlay {
     startDrawHandPlacement() {
         this.drawHandPlacement = true;
         this.drawHandPlacementOverlay();
-        this.menuDiv.style.opacity = '1';
+        this.menuDiv.style.opacity = "1";
     }
 
     stopDrawHandPlacement() {
         this.drawHandPlacement = false;
-        this.menuDiv.style.opacity = '0';
+        this.menuDiv.style.opacity = "0";
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 

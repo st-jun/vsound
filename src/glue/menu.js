@@ -1,7 +1,7 @@
 import {waitForCondition} from "util";
 
 function createContainer() {
-    const container = document.createElement('div');
+    const container = document.createElement("div");
 
     container.classList.add("full-container");
 
@@ -9,7 +9,7 @@ function createContainer() {
 }
 
 function createTextfield(text) {
-    const textField = document.createElement('div');
+    const textField = document.createElement("div");
 
     textField.classList.add("menu-text");
     textField.innerHTML = text;
@@ -19,30 +19,30 @@ function createTextfield(text) {
 
 
 function createImage(src, centerX, centerY, width, height) {
-    const img = document.createElement('img');
+    const img = document.createElement("img");
 
     img.src = src;
-    img.style.position = 'absolute';
+    img.style.position = "absolute";
     img.style.left = `${centerX * 100}vw`;
     img.style.top = `${centerY * 100}vh`;
     img.style.width = `${width * 100}vh`;
     img.style.height = `${height * 100}vh`;
-    img.style.transform = 'translate(-50%, -50%)';
+    img.style.transform = "translate(-50%, -50%)";
 
     return img;
 }
 
 
 function createVideo(src, centerX, centerY, width, height) {
-    const video = document.createElement('video');
+    const video = document.createElement("video");
 
     video.src = src;
-    video.style.position = 'absolute';
+    video.style.position = "absolute";
     video.style.left = `${centerX * 100}vw`;
     video.style.top = `${centerY * 100}vh`;
     video.style.width = `${width * 100}vh`;
     video.style.height = `${height * 100}vh`;
-    video.style.transform = 'translate(-50%, -50%)';
+    video.style.transform = "translate(-50%, -50%)";
 
     return video;
 }
@@ -64,7 +64,7 @@ export class GreetingMenu {
     setContent() {
         const container = createContainer();
 
-        const video = createVideo('public/example.mp4', 0.5, 0.4, 0.7, 0.5);
+        const video = createVideo("public/example.mp4", 0.5, 0.4, 0.7, 0.5);
         video.autoplay = true;
         video.loop = true;
         video.muted = true;
@@ -72,9 +72,9 @@ export class GreetingMenu {
         container.appendChild(video);
 
         const textField = createTextfield(
-            'This is a demo application that allows you to control a simple synthesizer setup through the movement of your hands.<br><br>' +
-            'In order to track your hands, please allow the browser to access your camera. In order to hear the sound, make sure your speakers are active.<br><br>' +
-            'Click anywhere to proceed.');
+            "This is a demo application that allows you to control a simple synthesizer setup through the movement of your hands.<br><br>" +
+            "In order to track your hands, please allow the browser to access your camera. In order to hear the sound, make sure your speakers are active.<br><br>" +
+            "Click anywhere to proceed.");
         container.appendChild(textField);
 
         this.overlay.setMenuContent(container);
@@ -104,12 +104,12 @@ export class HandPlacementMenu {
 
     setContent() {
         const container = createContainer();
-        const imgLeft = createImage('public/left_hand.png', 0.35, 0.5, 0.3, 0.3);
-        const imgRight = createImage('public/right_hand.png', 0.65, 0.5, 0.3, 0.3);
+        const imgLeft = createImage("public/left_hand.png", 0.35, 0.5, 0.3, 0.3);
+        const imgRight = createImage("public/right_hand.png", 0.65, 0.5, 0.3, 0.3);
         const textField = createTextfield(
-            'Place your hands according to the indicators to start.<br><br>' +
-            'Afterwards, carefully try to move your hands and fingers to find out how it affects the sound.<br><br>' +
-            'Remove your hands from the detection area for more than three seconds to exit.');
+            "Place your hands according to the indicators to start.<br><br>" +
+            "Afterwards, carefully try to move your hands and fingers to find out how it affects the sound.<br><br>" +
+            "Remove your hands from the detection area for more than three seconds to exit.");
         container.appendChild(imgLeft);
         container.appendChild(imgRight);
         container.appendChild(textField);

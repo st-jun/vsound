@@ -4,6 +4,11 @@ import {
 } from "mediapipe/tasksVision";
 
 
+/**
+ * Wrapper around mediapipe hand landmarker detection.
+ * @see {@link https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker}
+ * @class
+ */
 export default class HandPoseDetector {
     constructor(webcam) {
         this.detector = undefined;
@@ -15,6 +20,10 @@ export default class HandPoseDetector {
         this.detectionCallback = undefined;
     }
 
+    /**
+     * Download model and create detector.
+     * @returns {Promise<void>}
+     */
     async createDetector() {
         const vision = await FilesetResolver.forVisionTasks(
             "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
@@ -29,14 +38,25 @@ export default class HandPoseDetector {
         });
     }
 
+    /**
+     * Set a function that is called after detection has finished.
+     * @param callbackFunc
+     */
     setPostDetectionCallback(callbackFunc) {
         this.detectionCallback = callbackFunc;
     }
 
+    /**
+     * Remove the function that is called after detection.
+     */
     resetPostDetectionCallback() {
         this.detectionCallback = undefined;
     }
 
+    /**
+     * Detect handposes and call callback function.
+     * @returns {Promise<void>}
+     */
     detect = async () => {
         if (this.detector === undefined) {
             await this.createDetector();

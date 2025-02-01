@@ -1,6 +1,6 @@
-import HandPoseDetector from 'handPoseDetector';
-import Webcam from 'camera';
-import SynthCollection from 'oscillatorStage';
+import HandPoseDetector from "handPoseDetector";
+import Webcam from "camera";
+import SynthCollection from "oscillatorStage";
 import EffectChain, {
     AutoFilterEffect,
     AutoWahEffect,
@@ -15,9 +15,13 @@ import UI from "ui";
 import {AMSynthesizer, FMSynthesizer, DuoSynthesizer} from "synthesizer";
 import MasteringStage from "masteringStage";
 import {GreetingMenu, HandPlacementMenu} from "menu";
-import {getGPUTier} from 'detect-gpu';
+import {getGPUTier} from "detect-gpu";
 
 
+/**
+ * Main class that handles the program flow.
+ * @class
+ */
 export default class App {
     constructor(controlPoints = [[0.35, 0.5], [0.65, 0.5]]) {
         // The control points indicate the references for left and right hand.
@@ -25,6 +29,10 @@ export default class App {
         this.controlPoints = controlPoints;
     }
 
+    /**
+     * Run the program.
+     * @returns {Promise<void>}
+     */
     run = async () => {
         // this is modeled in a "synchronous" way on purpose to make the flow more explicit
         this.checkCompatibility();
@@ -33,6 +41,9 @@ export default class App {
         this.startMain();
     }
 
+    /**
+     * Check if there are issues like browser support or weak gpu.
+     */
     checkCompatibility() {
         // check browser
         if (/firefox/i.test(navigator.userAgent)) {
@@ -58,6 +69,9 @@ export default class App {
         })();
     }
 
+    /**
+     * Set up the hand pose detection and user interface modules.
+     */
     initDetection() {
         // Camera
         this.webcam = new Webcam();
@@ -80,6 +94,10 @@ export default class App {
         this.detectionActive = true;
     }
 
+    /**
+     * Run through the start menu.
+     * @returns {Promise<void>}
+     */
     startMenu = async () => {
         const greetingMenu = new GreetingMenu(this.ui, this.ui.overlay);
         await greetingMenu.run();
@@ -90,6 +108,10 @@ export default class App {
         await handPlacementMenu.run();
     }
 
+    /**
+     * Initialize sound generation, controller and non-menu parts of the user interface.
+     * Then run!
+     */
     startMain() {
         // Output/Mastering
         this.masteringStage = new MasteringStage();
@@ -120,13 +142,17 @@ export default class App {
         this.handsMissing = null;
         this.ui.startScene(this.controllers, this.synthCollection, this.effectChain);
         this.ui.overlay.startDrawRun();
+        this.masteringStage.start();
     }
 
+    /**
+     * Stop everything and reload to start screen.
+     */
     stop() {
         this.ui.overlay.stopDrawRun();
         this.ui.stopScene();
         if (this.synthCollection) this.synthCollection.stop();
-        if (this.masteringStage) this.masteringStage.adjustGain(0);
+        if (this.masteringStage) this.masteringStage.stop();
         this.handPoseDetector.resetPostDetectionCallback();
 
         this.controllers = [];

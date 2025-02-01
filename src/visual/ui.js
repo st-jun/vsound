@@ -18,7 +18,7 @@ export default class UI {
         this.container.appendChild(this.overlay.canvas);
         document.body.appendChild(this.container);
 
-        window.addEventListener('resize', this.resize);
+        window.addEventListener("resize", this.resize);
         this.resize();
     }
 
@@ -36,13 +36,13 @@ export default class UI {
     }
 
     initContainer() {
-        this.container = document.createElement('div');
-        this.container.classList.add('full-container');
+        this.container = document.createElement("div");
+        this.container.classList.add("full-container");
     }
 
     initSceneCanvas() {
-        this.sceneCanvas = document.createElement('canvas');
-        this.sceneCanvas.classList.add('full-canvas');
+        this.sceneCanvas = document.createElement("canvas");
+        this.sceneCanvas.classList.add("full-canvas");
     }
 
     resize = () => {

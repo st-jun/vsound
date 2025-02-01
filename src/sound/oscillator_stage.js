@@ -149,7 +149,7 @@ export default class SynthCollection extends SynthControllable{
             for (let synth of this.synthesizers) {
                 for (let cs of synth.chordSynths) {
                     cs.triggerAttack("C4");
-                    cs.volume.value = 0;
+                    cs.volume.value = -100;
                 }
             }
             this.updateChord();
@@ -243,7 +243,7 @@ export default class SynthCollection extends SynthControllable{
             this.updateArpeggioChord();
             if (this.chordActive) {
                 for (let synth of this.synthesizers) {
-                    synth.chordSynths[index].volume.value = 0;
+                    synth.chordSynths[index].volume.value = -100;
                 }
             }
         } else {

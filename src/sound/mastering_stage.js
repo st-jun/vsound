@@ -4,24 +4,21 @@ export default class MasteringStage {
         this.compressor = new Tone.Compressor({
             threshold: this.targetLoudness + 1,
             ratio: 8,
-            attack: 0.01,
+            attack: 0.1,
             release: 0.1
         })
-        this.levelMeter = new Tone.Meter();
-        this.mainGain = new Tone.Gain(0.1);
 
-        this.mainGain.connect(this.levelMeter);
+        this.mainGain = new Tone.Gain(0.);
+
         this.mainGain.connect(this.compressor);
         this.compressor.toDestination();
-
-        setInterval(() => {
-            const loudness = this.levelMeter.getValue();
-            if (loudness > -Infinity) this.adjustGain(loudness);
-        }, 100);
     }
 
-    adjustGain(loudness) {
-        const adjustment = Math.min(20, this.targetLoudness - loudness);
-        this.mainGain.gain.value = Tone.dbToGain(adjustment);
+    start() {
+        this.mainGain.gain.rampTo(0.1, 1);
+    }
+
+    stop() {
+        this.mainGain.gain.rampTo(0.0, 1);
     }
 }
