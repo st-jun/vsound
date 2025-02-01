@@ -21,7 +21,9 @@ If you want to host it yourself, simply publish the files on a webserver, [third
 
 If for some reason you can not access the hosted version, you can watch an example video here:
 
-https://github.com/user-attachments/assets/02afdb65-b9c1-4ecb-84fe-067e2f3e4469
+https://github.com/user-attachments/assets/473120d1-5f1d-43bf-b43e-851736a59f17
+
+
 
 
 ## Controls
@@ -46,6 +48,7 @@ The controls are designed to be easily modifiable through the `Controller` class
 ## Planned
 - [x] Improve performance
 - [ ] Provide resource friendly version
+- [ ] Reduce popping and crackling
 - [ ] Softer synth + effect set
 - [ ] Real patterns instead of chords/arpeggios
 - [ ] YouTube integration
