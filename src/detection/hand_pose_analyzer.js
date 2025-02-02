@@ -121,7 +121,7 @@ export default class HandPoseAnalyzer {
                     this.fingerIsExtended[i] = this.fingerExtension[i] > 0;
                 }
 
-                this.fingerTipX[i] = handPose[i * 4 + 4].x;
+                this.fingerTipX[i] = 1 - handPose[i * 4 + 4].x;
                 this.fingerTipY[i] = handPose[i * 4 + 4].y;
             }
 
