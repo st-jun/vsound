@@ -1,5 +1,6 @@
 import {waitForCondition} from "util";
 
+
 function createContainer() {
     const container = document.createElement("div");
 
@@ -8,10 +9,11 @@ function createContainer() {
     return container;
 }
 
-function createTextfield(text) {
+
+function createTextfield(text, className = "menu-text") {
     const textField = document.createElement("div");
 
-    textField.classList.add("menu-text");
+    textField.classList.add(className);
     textField.innerHTML = text;
 
     return textField;
@@ -71,11 +73,36 @@ export class GreetingMenu {
         video.playbackRate = 5;
         container.appendChild(video);
 
+        const videoSimple = createVideo("public/example2D.mp4", 0.5, 0.4, 0.7, 0.5);
+        videoSimple.autoplay = true;
+        videoSimple.loop = true;
+        videoSimple.muted = true;
+        videoSimple.playbackRate = 5;
+        videoSimple.opacity = 0;
+        container.appendChild(videoSimple);
+
         const textField = createTextfield(
             "This is a demo application that allows you to control a simple synthesizer setup through the movement of your hands.<br><br>" +
             "In order to track your hands, please allow the browser to access your camera. In order to hear the sound, make sure your speakers are active.<br><br>" +
-            "Click anywhere to proceed.");
+            "Click left for more resource friendly 2D animation, right for 3D animation.");
         container.appendChild(textField);
+
+        document.addEventListener("mousemove", (event) => {
+            const screenWidth = window.innerWidth; // Get total screen width
+            const mouseX = event.clientX; // Get mouse position on X-axis
+
+            if (mouseX < screenWidth / 2) {
+                console.log("Mouse is on the LEFT side");
+                video.style.display = "none";
+                videoSimple.style.display = "";
+                this.ui.simpleUI = true;
+            } else {
+                console.log("Mouse is on the RIGHT side");
+                video.style.display = "";
+                videoSimple.style.display = "none";
+                this.ui.simpleUI = false;
+            }
+        });
 
         this.overlay.setMenuContent(container);
     }

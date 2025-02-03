@@ -1,3 +1,6 @@
+import {drawCircle} from "util";
+
+
 export default class UIOverlay {
     constructor(handPoseAnalyzers) {
         this.handPoseAnalyzers = handPoseAnalyzers;
@@ -13,6 +16,7 @@ export default class UIOverlay {
     initCanvas() {
         this.canvas = document.createElement("canvas");
         this.canvas.classList.add("full-canvas");
+        this.canvas.id = "overlay";
     }
 
     initMenuDiv() {
@@ -68,22 +72,9 @@ export default class UIOverlay {
     drawRunOverlay = () => {
         if (this.drawRun) {
             requestAnimationFrame(this.drawRunOverlay);
-            // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.globalAlpha = 0.01; // Set transparency (0 = fully transparent, 1 = fully opaque)
-            this.ctx.fillStyle = "white";
-            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.globalAlpha = 1.0; // Reset for future drawings
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.drawBorderWarnings();
-            this.drawHandOverlay(this.handPoseAnalyzers[0], "black", true);
-            this.drawHandPolygon(this.handPoseAnalyzers[1], "black", 50);
         }
-    }
-
-    drawCircle(ctx, x, y, radius, color) {
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.fill();
     }
 
     drawBorderWarnings() {
@@ -113,7 +104,7 @@ export default class UIOverlay {
 
     drawHandOverlay(handPoseAnalyzer, color = "red", includeFingers = true) {
         // palm
-        this.drawCircle(
+        drawCircle(
             this.ctx,
             this.getX(handPoseAnalyzer.handX),
             this.getY(handPoseAnalyzer.handY),
@@ -124,7 +115,7 @@ export default class UIOverlay {
         if (includeFingers) {
             for (let i = 0; i < handPoseAnalyzer.fingerTipX.length; i++) {
                 if (handPoseAnalyzer.fingerIsExtended[i] || i === 0) {
-                    this.drawCircle(
+                    drawCircle(
                         this.ctx,
                         this.getX(handPoseAnalyzer.fingerTipX[i]),
                         this.getY(handPoseAnalyzer.fingerTipY[i]),
@@ -133,19 +124,5 @@ export default class UIOverlay {
                 }
             }
         }
-    }
-
-    drawHandPolygon(handPoseAnalyzer, color = "black", lineWidth = 10) {
-        this.ctx.lineWidth = 10;
-        this.ctx.strokeStyle = color;
-        this.ctx.beginPath();
-        this.ctx.moveTo(this.getX(handPoseAnalyzer.handX), this.getY(handPoseAnalyzer.handY));
-        for (let i = 0; i < handPoseAnalyzer.fingerTipX.length; i++) {
-            if (handPoseAnalyzer.fingerIsExtended[i] || i === 0) {
-                this.ctx.lineTo(this.getX(handPoseAnalyzer.fingerTipX[i]), this.getY(handPoseAnalyzer.fingerTipY[i]));
-            }
-        }
-        this.ctx.closePath();
-        this.ctx.stroke();
     }
 }

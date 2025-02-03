@@ -1,19 +1,20 @@
-import UIScene from "uiScene";
 import UIOverlay from "uiOverlay";
+import UIScene2D from "uiScene2D";
+import UIScene3D from "uiScene3D";
 
 
 export default class UI {
     constructor(webcam, handPoseAnalyzers) {
+        this.simpleUI = false;
+
         this.webcam = webcam;
         this.initContainer();
-        this.initSceneCanvas();
 
         this.overlay = new UIOverlay(handPoseAnalyzers);
         this.scene = null;
         this.clickListener = null;
 
         this.container.appendChild(this.webcam.video);
-        this.container.appendChild(this.sceneCanvas);
         this.container.appendChild(this.overlay.menuDiv);
         this.container.appendChild(this.overlay.canvas);
         document.body.appendChild(this.container);
@@ -27,7 +28,10 @@ export default class UI {
     }
 
     startScene(controllers, synthCollection, effectChain) {
-        this.scene = new UIScene(this.sceneCanvas, controllers, synthCollection, effectChain);
+        if (this.simpleUI) this.scene = new UIScene2D(controllers, synthCollection);
+        else               this.scene = new UIScene3D(controllers, synthCollection, effectChain);
+        this.container.appendChild(this.scene.getCanvas());
+        this.scene.start();
     }
 
     stopScene() {
@@ -40,15 +44,12 @@ export default class UI {
         this.container.classList.add("full-container");
     }
 
-    initSceneCanvas() {
-        this.sceneCanvas = document.createElement("canvas");
-        this.sceneCanvas.classList.add("full-canvas");
-    }
-
     resize = () => {
         this.overlay.canvas.width = window.innerWidth;
         this.overlay.canvas.height = window.innerHeight;
-        this.sceneCanvas.width = window.innerWidth;
-        this.sceneCanvas.height = window.innerHeight;
+        if (this.scene !== null) {
+            this.scene.getCanvas().width = window.innerWidth;
+            this.scene.getCanvas().height = window.innerHeight;
+        }
     }
 }

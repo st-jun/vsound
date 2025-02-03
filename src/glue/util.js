@@ -43,3 +43,16 @@ export function waitForCondition(conditionFunc, interval) {
         }, interval);
     });
 }
+
+
+export function drawCircle(ctx, x, y, radius, color) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+
+export function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}

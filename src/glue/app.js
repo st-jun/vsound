@@ -23,10 +23,11 @@ import {getGPUTier} from "detect-gpu";
  * @class
  */
 export default class App {
-    constructor(controlPoints = [[0.35, 0.5], [0.65, 0.5]]) {
+    constructor(devMode = false, controlPoints = [[0.35, 0.5], [0.65, 0.5]]) {
         // The control points indicate the references for left and right hand.
         // Hand positions w.r.t. them influence some aspects of the instruments and effects.
         this.controlPoints = controlPoints;
+        this.devMode = devMode;
     }
 
     /**
@@ -104,8 +105,10 @@ export default class App {
 
         this.webcam.start();
 
-        const handPlacementMenu = new HandPlacementMenu(this.ui.overlay, this.handPoseAnalyzers)
-        await handPlacementMenu.run();
+        if (!this.devMode) {
+            const handPlacementMenu = new HandPlacementMenu(this.ui.overlay, this.handPoseAnalyzers)
+            await handPlacementMenu.run();
+        }
     }
 
     /**
