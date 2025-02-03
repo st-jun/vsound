@@ -19,9 +19,12 @@ There is a hosted version at https://st-jun.github.io/vsound/.
 If you want to host it yourself, simply publish the files on a webserver, [third party resources](#third-party-resources) are loaded automatically.
 
 
-If for some reason you can not access the hosted version, you can watch an example video here:
+If for some reason you can not access the hosted version, you can watch example videos for the 2D and 3D version here:
+
+https://github.com/user-attachments/assets/a740179e-a539-4e18-945f-304277f3ce38
 
 https://github.com/user-attachments/assets/473120d1-5f1d-43bf-b43e-851736a59f17
+
 
 
 
@@ -47,8 +50,8 @@ The controls are designed to be easily modifiable through the `Controller` class
 
 ## Planned
 - [x] Improve performance
-- [ ] Provide resource friendly version
-- [ ] Reduce popping and crackling
+- [x] Provide resource friendly version
+- [x] Reduce popping and crackling
 - [ ] Softer synth + effect set
 - [ ] Real patterns instead of chords/arpeggios
 - [ ] YouTube integration
