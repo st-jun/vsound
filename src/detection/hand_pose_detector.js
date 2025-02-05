@@ -2,6 +2,7 @@ import {
     HandLandmarker,
     FilesetResolver
 } from "mediapipe/tasksVision";
+import {stopSpinner} from "util";
 
 
 /**
@@ -60,6 +61,7 @@ export default class HandPoseDetector {
     detect = async () => {
         if (this.detector === undefined) {
             await this.createDetector();
+            stopSpinner();
         }
 
         if (this.webcam.isRunning) {

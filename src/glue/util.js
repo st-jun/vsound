@@ -56,3 +56,19 @@ export function drawCircle(ctx, x, y, radius, color) {
 export function getRandom(min, max) {
     return Math.random() * (max - min) + min;
 }
+
+
+let spinner = null;
+
+export async function startSpinner() {
+    if (spinner === null) {
+        spinner = document.createElement("div");
+        spinner.classList.add("spinner");
+        document.body.appendChild(spinner);
+    }
+}
+
+export async function stopSpinner() {
+    if (spinner) spinner.remove();
+    spinner = null;
+}

@@ -8,22 +8,6 @@ import SynthCollection, {Chords} from "oscillatorStage";
 import UIScene from "uiScene";
 
 
-const rainbowColors = [
-    "#FF0000",
-    "#FF7F00",
-    "#FFFF00",
-    "#7FFF00",
-    "#00FF00",
-    "#00FF7F",
-    "#00FFFF",
-    "#007FFF",
-    "#0000FF",
-    "#7F00FF",
-    "#FF00FF",
-    "#FF007F"
-];
-
-
 export default class UIScene3D extends UIScene {
     constructor(controllers, synthCollection, effectChain) {
         super();
@@ -65,8 +49,10 @@ export default class UIScene3D extends UIScene {
         const torusRadius = 2;
         const numBoxes = 12;
         this.nLinesPerEffect = 3;
-        this.octaveRing = new BoxTorus(this.scene, numBoxes, [boxSize, boxSize, boxSize], torusRadius, UIScene.rainbowColors, false);
-        this.effectLines = new BoxTorus(this.scene, effectChain.effects.length * this.nLinesPerEffect, [0.15, 0.15, 1000], 3, ["#000000"], true, [0, 0, -100]);
+        this.octaveRing = new BoxTorus(this.scene, numBoxes, [boxSize, boxSize, boxSize], torusRadius,
+                                       UIScene.rainbowColors, false, [0, 0, 1000]);
+        this.effectLines = new BoxTorus(this.scene, effectChain.effects.length * this.nLinesPerEffect,
+                               [0.15, 0.15, 1000], 3, ["#000000"], true, [0, 0, -100]);
         this.filterPoti = new Potentiometer(this.scene);
 
         this.sceneSynths = new UISceneSynths(this.camera, this.octaveRing, this.filterPoti, synthCollection);

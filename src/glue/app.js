@@ -16,6 +16,7 @@ import {AMSynthesizer, FMSynthesizer, DuoSynthesizer} from "synthesizer";
 import MasteringStage from "masteringStage";
 import {GreetingMenu, HandPlacementMenu} from "menu";
 import {getGPUTier} from "detect-gpu";
+import {startSpinner, stopSpinner} from "util";
 
 
 /**
@@ -103,6 +104,7 @@ export default class App {
         const greetingMenu = new GreetingMenu(this.ui, this.ui.overlay);
         await greetingMenu.run();
 
+        startSpinner();
         this.webcam.start();
 
         if (!this.devMode) {

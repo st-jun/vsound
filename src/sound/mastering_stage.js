@@ -1,6 +1,6 @@
 export default class MasteringStage {
     constructor() {
-        this.targetLoudness = -35; // dB
+        this.targetLoudness = -25; // dB
         this.compressor = new Tone.Compressor({
             threshold: this.targetLoudness + 1,
             ratio: 8,
@@ -15,7 +15,7 @@ export default class MasteringStage {
     }
 
     start() {
-        this.mainGain.gain.rampTo(0.1, 1);
+        this.mainGain.gain.rampTo(0.2, 1);
     }
 
     stop() {

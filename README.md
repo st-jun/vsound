@@ -16,7 +16,7 @@ While there is no full orchestra at your disposal, you get a synthesizer and a f
 ## Run
 There is a hosted version at https://st-jun.github.io/vsound/.
 
-If you want to host it yourself, simply publish the files on a webserver, [third party resources](#third-party-resources) are loaded automatically.
+You can also host the app yourself by simply publishing the files on a webserver, [third party resources](#third-party-resources) are loaded automatically.
 
 
 If for some reason you can not access the hosted version, you can watch example videos for the 2D and 3D version here:
