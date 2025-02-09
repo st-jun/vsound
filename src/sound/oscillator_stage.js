@@ -95,7 +95,7 @@ export default class SynthCollection extends SynthControllable{
     static chordProgressions = [Chords.majorProgression, Chords.minorProgression, Chords.powerProgression];
     static chordProgressionsCents = [Chords.majorProgressionCents, Chords.minorProgressionCents, Chords.powerProgressionCents];
 
-    constructor(synthesizers, outRoute, chordActive) {
+    constructor(synthesizers, drumPatterns, outRoute, chordActive) {
         super();
         this.chordActive = chordActive;
 
@@ -114,6 +114,9 @@ export default class SynthCollection extends SynthControllable{
             if (this.chordActive) synth.connect(this.chordGain);
             synth.connectArpeggio(this.arpeggioGain);
         }
+
+        this.drumPatterns = drumPatterns;
+        this.currentDrumPattern = null;
 
         this.currentNotes = [null];
         this.currentIndices = [];
@@ -154,6 +157,9 @@ export default class SynthCollection extends SynthControllable{
             }
             this.updateChord();
         }
+
+
+
     }
 
     stop() {
@@ -208,6 +214,17 @@ export default class SynthCollection extends SynthControllable{
                 }
             }
             synth.arpeggioSynth.set({envelope: envelope});
+        }
+    }
+
+    setDrumPattern(index) {
+        if (index !== this.currentDrumPattern) {
+            this.currentDrumPattern = index;
+            console.log("PATTERN", index);
+            for (let i = 0; i < this.drumPatterns.length; i++) {
+                if (i === index) this.drumPatterns[index].start();
+                else this.drumPatterns[index].stop();
+            }
         }
     }
 
@@ -280,7 +297,7 @@ export default class SynthCollection extends SynthControllable{
     }
 
     setArpeggioSpeed(speed) {
-        this.bpm = this.arpeggioSpeeds[Math.round(speed * (this.arpeggioSpeeds.length-1))];
+        this.bpm = 120;//this.arpeggioSpeeds[Math.round(speed * (this.arpeggioSpeeds.length-1))];
         Tone.Transport.bpm.value = this.bpm;
     }
 

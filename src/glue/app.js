@@ -17,6 +17,7 @@ import MasteringStage from "masteringStage";
 import {GreetingMenu, HandPlacementMenu} from "menu";
 import {getGPUTier} from "detect-gpu";
 import {startSpinner, stopSpinner} from "util";
+import {P0, P1, P2} from "drums";
 
 
 /**
@@ -136,7 +137,8 @@ export default class App {
 
         // Synthesizers
         const duoSynth = new DuoSynthesizer();
-        this.synthCollection = new SynthCollection([duoSynth], this.effectChain.lowpass, true);
+        const patterns = [new P0(this.masteringStage.mainGain), new P1(this.masteringStage.mainGain), new P2(this.masteringStage.mainGain)];
+        this.synthCollection = new SynthCollection([duoSynth], patterns, this.effectChain.lowpass, true);
 
         // Controllers
         this.controllers = [];
@@ -178,10 +180,10 @@ export default class App {
                     this.handsMissing = null;
                     this.handPoseAnalyzers[i].analyze(handPoses[i]);
                 } else {
-                    if (this.handsMissing === null) {
+                    if (this.handsMissing === null && !this.devMode) {
                         this.handsMissing = performance.now();
                     } else {
-                        if (performance.now() >= this.handsMissing + 3000) {
+                        if (performance.now() >= this.handsMissing + 3000 && !this.devMode) {
                             this.detectionActive = false;
                             this.stop();
                         }

@@ -15,6 +15,10 @@ export class SynthControllable {
         return undefined;
     }
 
+    setDrumPattern(index) {
+        return undefined;
+    }
+
     setInstrumentGain(index, gain) {
         return undefined;
     }
@@ -75,6 +79,10 @@ class Controller {
 
         this.lastIter = performance.now();
         this.minIterDuration = 10;
+    }
+
+    getDrumPattern(nDrumPatterns) {
+        return null;
     }
 
     getInstrumentGain(nInstruments, i) {
@@ -199,6 +207,9 @@ class Controller {
                 }
             }
 
+            result = this.getDrumPattern(this.synthCollection.drumPatterns.length);
+            if (result !== null) synthControllable.setDrumPattern(result);
+
             // instrument gains
             for (let i = 0; i < this.synthCollection.synthesizers.length; i++) {
                 result = this.getInstrumentGain(this.synthCollection.synthesizers.length, i);
@@ -236,6 +247,10 @@ class Controller {
 
 
 export class InstrumentController extends Controller {
+    getDrumPattern(nDrumPatterns) {
+        return clip(Math.round((this.handPoseAnalyzer.handRefX + 0.25) * 2 * nDrumPatterns), 0, nDrumPatterns - 1);
+    }
+
     getInstrumentGain(nInstruments, i) {
         const w = 0.5 / nInstruments;
         const l = i / nInstruments / 2. - w;
